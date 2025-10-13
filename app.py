@@ -25,7 +25,8 @@ EMOTION_GIFS = {
 # --- PAGE SETUP ---
 st.set_page_config(
     page_title="🧠 Emotion Detector From Text",
-    page_icon="https://p7.hiclipart.com/preview/573/335/801/stock-photography-robot-royalty-free-robots.jpg",
+    # UPDATED: Changed page_icon to the new URL
+    page_icon="https://cdn-icons-png.flaticon.com/128/10479/10479785.png",
     layout="wide",
 )
 
@@ -98,16 +99,16 @@ st.markdown("""
             0 0 12px var(--primary-dark);
         
         /* Ensure text and image align nicely if image is used in header */
-        display: flex; /* Use flexbox to align content */
-        align-items: center; /* Vertically center items */
-        gap: 10px; /* Space between image and text */
+        display: flex; 
+        align-items: center; 
+        gap: 10px; 
     }
 
     /* Style for the new image in the header */
     .header-icon {
         height: 35px; /* Adjust size as needed */
         width: auto;
-        vertical-align: middle; /* Align with text */
+        vertical-align: middle; 
     }
 
     /* 5. TEXT AREA EFFECTS */
@@ -253,7 +254,7 @@ with input_container:
     # UPDATED: Image instead of emoji, and custom styling for alignment
     st.markdown(f"""
         <h3>
-            <img src="https://cdn-icons-gif.flaticon.com/12544/12544440.gif">
+            <img src="https://img.freepik.com/free-vector/graident-ai-robot-vectorart_78370-4114.jpg?semt=ais_hybrid&w=740&q=80" class="header-icon" alt="Robot Icon">
             PUT YOUR TEXT HERE
         </h3>
     """, unsafe_allow_html=True)
@@ -265,9 +266,9 @@ This is confusing; I need someone to clarify the instructions for step three.
 My heart is racing, I'm genuinely terrified of what might happen next."""
     
     with col_input:
-        # REMOVED LABEL, kept the text_area
+        # REMOVED LABEL, as it's now visually handled by the header
         input_text = st.text_area(
-            "", # Label removed, as it's now visually handled by the header
+            "", 
             value=default_text,
             height=200,
             key="input_text_area"
@@ -336,4 +337,3 @@ if analyze:
 # 3. FOOTER
 st.markdown("---")
 st.markdown('<p class="st-emotion-detector-caption"> BUILT BY CSE-A</p>', unsafe_allow_html=True)
-
