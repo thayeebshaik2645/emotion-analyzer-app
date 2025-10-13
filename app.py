@@ -164,6 +164,7 @@ if analyze:
         st.warning("Please enter some text before clicking *Analyze*.")
 
 st.markdown("---")
-st.caption("CSE-A")
+st.caption("BUILD BY CSE-A")
+
 
 
