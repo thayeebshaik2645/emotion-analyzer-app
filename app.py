@@ -29,7 +29,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (Updated Fonts for h3) ---
+# --- CUSTOM CSS (Updated for new image and potential image styling) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
@@ -47,7 +47,7 @@ st.markdown("""
         
         --main-font: 'Poppins', sans-serif; 
         --mono-font: 'Fira Code', monospace; 
-        --header-font: 'Montserrat', sans-serif; /* New font for header */
+        --header-font: 'Montserrat', sans-serif; 
     }
     
     /* --- EMOTION SPECIFIC COLOR MAP --- */
@@ -84,7 +84,7 @@ st.markdown("""
     /* --- GLOWING EFFECT & NEW FONT ON SUBHEADER (h3) --- */
     h3 {
         color: var(--text-color-light);
-        font-family: var(--header-font); /* Applied new Montserrat font */
+        font-family: var(--header-font); 
         font-weight: 700; 
         padding-left: 5px; 
         border-left: 5px solid var(--primary-color); 
@@ -96,6 +96,18 @@ st.markdown("""
             0 0 4px var(--primary-color), 
             0 0 8px var(--primary-color), 
             0 0 12px var(--primary-dark);
+        
+        /* Ensure text and image align nicely if image is used in header */
+        display: flex; /* Use flexbox to align content */
+        align-items: center; /* Vertically center items */
+        gap: 10px; /* Space between image and text */
+    }
+
+    /* Style for the new image in the header */
+    .header-icon {
+        height: 35px; /* Adjust size as needed */
+        width: auto;
+        vertical-align: middle; /* Align with text */
     }
 
     /* 5. TEXT AREA EFFECTS */
@@ -238,8 +250,13 @@ st.markdown("---")
 # 1. INPUT BLOCK
 input_container = st.container()
 with input_container:
-    # INPUT HEADER WITH GLOW AND NEW FONT
-    st.subheader("⌨️ PUT YOUR TEXT HERE")
+    # UPDATED: Image instead of emoji, and custom styling for alignment
+    st.markdown(f"""
+        <h3>
+            <img src="https://img.freepik.com/free-vector/graident-ai-robot-vectorart_78370-4114.jpg?semt=ais_hybrid&w=740&q=80" class="header-icon" alt="Robot Icon">
+            PUT YOUR TEXT HERE
+        </h3>
+    """, unsafe_allow_html=True)
     
     col1, col_input, col2 = st.columns([1, 4, 1])
 
@@ -250,7 +267,7 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
     with col_input:
         # REMOVED LABEL, kept the text_area
         input_text = st.text_area(
-            "", # Label removed
+            "", # Label removed, as it's now visually handled by the header
             value=default_text,
             height=200,
             key="input_text_area"
