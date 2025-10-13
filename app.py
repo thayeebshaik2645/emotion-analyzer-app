@@ -1,17 +1,15 @@
 import streamlit as st
-import pandas as pd
 from transformers import pipeline
 
 # --- CONFIGURATION ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
-# Removed emojis from page_icon and all markdown text
 
 # --- PAGE SETUP ---
 st.set_page_config(
     page_title="Emotion Detector From Text",
-    # Using a simple icon or removing it for cleaner look
     page_icon="🤖", 
     layout="wide",
+    initial_sidebar_state="expanded", # Added sidebar state for consistency
 )
 
 # --- CUSTOM CSS (DARK/NEON THEME & Font Overhaul) ---
@@ -30,7 +28,6 @@ st.markdown("""
     }
     
     /* --- EMOTION SPECIFIC COLOR MAP --- */
-    /* Define colors for the result blocks */
     .emotion-anger, .emotion-disgust { --emotion-color: #ff3366; } /* Red/Pink */
     .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #fffb00; } /* Neon Yellow */
     .emotion-sadness, .emotion-loneliness { --emotion-color: #00aaff; } /* Blue */
@@ -44,9 +41,6 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
         color: var(--text-color-light); 
     }
-    .stText, .stMarkdown, .stAlert, .stApp {
-        color: var(--text-color-light) !important;
-    }
     
     /* Apply surface color to primary Streamlit containers for "block" look */
     .stApp .st-emotion-cache-1pxn4ip, .stApp .st-emotion-cache-1v0pmnt {
@@ -56,6 +50,17 @@ st.markdown("""
         margin-bottom: 20px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     }
+    
+    /* Sidebar Styling */
+    .stSidebar {
+        background-color: var(--surface-color) !important;
+        border-right: 2px solid var(--primary-dark);
+    }
+    .stSidebar h2 {
+        border-left: none;
+        text-align: center;
+    }
+
 
     /* 3. TITLES & TEXT EFFECTS */
     h1 {
@@ -75,31 +80,13 @@ st.markdown("""
         margin-top: 2rem;
         margin-bottom: 1rem;
     }
-
+    
     /* System Status Messages */
-    .stSuccess {
-        background-color: transparent !important;
-        border: 1px solid var(--primary-dark) !important;
-        color: var(--primary-color) !important;
-    }
-    .stError {
-        background-color: transparent !important;
-        border: 1px solid #ff3366 !important;
-        color: #ff3366 !important;
-    }
-    .stWarning {
-        background-color: transparent !important;
-        border: 1px solid #fffb00 !important;
-        color: #fffb00 !important;
-    }
+    .stSuccess { border: 1px solid var(--primary-dark) !important; color: var(--primary-color) !important; background-color: transparent !important;}
+    .stError { border: 1px solid #ff3366 !important; color: #ff3366 !important; background-color: transparent !important;}
+    .stWarning { border: 1px solid #fffb00 !important; color: #fffb00 !important; background-color: transparent !important;}
 
-    /* 4. TEXT AREA EFFECTS */
-    .stTextArea label {
-        font-weight: 600;
-        color: var(--primary-color);
-        font-family: 'Inter', sans-serif;
-    }
-
+    /* 4. TEXT AREA & INPUTS */
     textarea {
         border-radius: 10px !important;
         border: 2px solid var(--primary-dark) !important;
@@ -108,17 +95,9 @@ st.markdown("""
         color: var(--primary-color) !important;
         font-size: 17px !important; 
         font-family: var(--mono-font) !important; 
-        line-height: 1.6; 
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
-        transition: all 0.3s ease;
     }
 
-    textarea:focus {
-        border: 2px solid var(--primary-color) !important;
-        box-shadow: 0 0 15px var(--primary-color) !important; 
-    }
-
-    /* 5. BUTTON EFFECTS (NEON GLOW) */
+    /* 5. BUTTON EFFECTS */
     div.stButton > button:first-child {
         background: var(--primary-dark);
         color: var(--background-dark);
@@ -138,30 +117,18 @@ st.markdown("""
         box-shadow: 0 0 25px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
-    /* 6. CUSTOM RESULT CARDS (DATA BLOCKS) */
+    /* 6. CUSTOM RESULT CARDS */
     .result-card {
         background-color: var(--surface-color);
-        border: 2px solid var(--emotion-color, var(--primary-dark)); /* Use emotion color for border */
-        border-left: 10px solid var(--emotion-color, var(--primary-color)); /* Strong left border */
+        border: 2px solid var(--emotion-color, var(--primary-dark)); 
+        border-left: 10px solid var(--emotion-color, var(--primary-color)); 
         border-radius: 10px;
         padding: 15px 20px;
         margin-bottom: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 5px var(--emotion-color, rgba(0, 0, 0, 0)); /* subtle glow */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 5px var(--emotion-color, rgba(0, 0, 0, 0));
         transition: all 0.3s ease;
     }
     
-    .result-card:hover {
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.8), 0 0 8px var(--emotion-color); /* Stronger hover glow */
-    }
-
-    .result-text {
-        color: var(--text-color-light);
-        font-family: 'Inter', sans-serif;
-        font-size: 1.1rem;
-        margin-bottom: 10px;
-        font-style: italic;
-    }
-
     .result-emotion {
         display: inline-block;
         font-size: 1.2rem;
@@ -170,7 +137,6 @@ st.markdown("""
         background-color: var(--emotion-color);
         padding: 5px 12px;
         border-radius: 6px;
-        margin-right: 15px;
         text-transform: uppercase;
         box-shadow: 0 0 5px var(--emotion-color);
     }
@@ -195,41 +161,36 @@ st.markdown("""
         color: var(--text-color-secondary);
         font-style: italic;
         margin-top: 1rem;
-        animation: fadeIn 3s;
     }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    footer, header {
-        visibility: hidden !important;
-    }
-
+    footer, header { visibility: hidden !important; }
     </style>
 """, unsafe_allow_html=True)
 
 # --- MODEL LOADING ---
+# Use a placeholder for the status message to avoid the default Streamlit success box
+status_placeholder = st.empty()
+
 @st.cache_resource
 def initialize_classifier():
     """Load and cache the transformer model."""
     try:
-        # Removed emoji, enhanced status message style
-        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);">SYSTEM STATUS: Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
+        status_placeholder.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font); margin-bottom: 15px; border-left: 3px solid var(--primary-color); padding-left: 10px;">SYSTEM STATUS: Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
+        
+        # Load the model
         classifier = pipeline(
             "text-classification",
             model=MODEL_NAME,
             return_all_scores=True
         )
-        # Removed emoji from success message
-        st.success("SYSTEM STATUS: Model loaded successfully!")
+        # Display a final success message
+        status_placeholder.success("SYSTEM STATUS: Model loaded successfully!")
         return classifier
     except Exception as e:
-        # Removed emoji from error message
-        st.error(f"SYSTEM FAILURE: Error loading model: {e}")
+        status_placeholder.error(f"SYSTEM FAILURE: Error loading model. Check console for details. {e}")
         st.stop()
 
 def detect_emotions(classifier, texts):
+    """Processes texts and returns analysis results."""
     if not texts:
         return []
 
@@ -245,53 +206,73 @@ def detect_emotions(classifier, texts):
     return results
 
 # =================================================================
-# --- FUTURISTIC UI LAYOUT ---
+# --- UI STRUCTURE ---
 # =================================================================
 
+# 1. MAIN TITLE
 st.title("EMOTION DETECTOR FROM TEXT")
 st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">DEEP LEARNING TEXT ANALYSIS INTERFACE</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
-# 1. INPUT BLOCK (Terminal style)
-with st.container():
-    st.subheader("SYSTEM INPUT INTERFACE")
-    
-    col1, col_input, col2 = st.columns([1, 4, 1])
+# 2. SIDEBAR FOR MODEL INFO (Good page structure practice)
+with st.sidebar:
+    st.image("https://p7.hiclipart.com/preview/573/335/801/stock-photography-robot-royalty-free-robots.jpg", use_column_width=True)
+    st.subheader("SYSTEM INFO")
+    st.markdown(f"""
+    <div style="font-family: var(--mono-font); color: var(--text-color-secondary);">
+        MODEL: **{MODEL_NAME}**<br>
+        TYPE: **DistilRoBERTa-base**<br>
+        TASK: **Text Classification**<br>
+        API: **HuggingFace Pipeline**<br>
+        <hr style='margin: 10px 0;'>
+        <p style='font-size: 0.8rem;'>*Model is loaded and cached for faster processing.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
+# 3. CORE LOGIC: INPUT, PROCESSING, OUTPUT (Use tabs for clean separation)
+input_tab, results_tab = st.tabs(["SYSTEM INPUT", "ANALYSIS LOG"])
+
+# --- INPUT TAB ---
+with input_tab:
+    st.subheader("ENTER TEXT FOR ANALYSIS")
+    
     default_text = """I am so incredibly happy and proud of what we achieved today!
 This is confusing; I need someone to clarify the instructions for step three.
-My heart is racing, I'm genuinely terrified of what might happen next."""
+My heart is racing, I'm genuinely terrified of what might happen next.
+Everything seems normal, just another day at the office."""
     
-    with col_input:
-        input_text = st.text_area(
-            "Input Log - Enter one sentence per line:",
-            value=default_text,
-            height=200,
-            key="input_text_area"
-        )
-        texts = [t.strip() for t in input_text.split("\n") if t.strip()]
-        
-        col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
-        with col_btn:
-             # Removed emoji from button text
-             analyze = st.button("INITIATE ANALYSIS", use_container_width=True)
+    # Text Area
+    input_text = st.text_area(
+        "Input Console - Enter one sentence per line:",
+        value=default_text,
+        height=250,
+        key="input_text_area"
+    )
+    texts = [t.strip() for t in input_text.split("\n") if t.strip()]
+    
+    st.markdown("---")
+    
+    col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
+    with col_btn:
+         analyze = st.button("INITIATE ANALYSIS", use_container_width=True)
 
-# Initialize classifier
+# Initialize classifier (Called outside tabs to ensure it loads once)
 classifier = initialize_classifier()
 
-st.markdown("---")
-
-# 2. RESULTS BLOCK (Custom Data Blocks/Cards)
+# --- RESULTS TAB ---
 if analyze:
-    if texts:
-        with st.container():
+    # Programmatically switch to the results tab upon button click
+    st.session_state["active_tab"] = "ANALYSIS LOG" 
+    
+    with results_tab:
+        if texts:
             st.subheader("ANALYSIS OUTPUT: EMOTION LOG")
             
-            with st.spinner("Processing data... Stand by. Executing high-speed classification."):
+            with st.spinner("Processing data... Executing high-speed classification."):
                 results = detect_emotions(classifier, texts)
                 
-                # Use st.columns to create a two-column grid for the cards for better density
+                # Use a two-column grid for dense output
                 cols = st.columns(2)
                 
                 for i, result in enumerate(results):
@@ -311,7 +292,7 @@ if analyze:
                     with cols[i % 2]: # Alternates between column 0 and 1
                         st.markdown(f"""
                             <div class="result-card {css_class}">
-                                <div class="result-text">"{input_text}"</div>
+                                <div style="color: var(--text-color-light); font-style: italic; margin-bottom: 10px;">"{input_text}"</div>
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div>
                                         <span class="result-emotion">{result['Dominant Emotion']}</span>
@@ -322,11 +303,9 @@ if analyze:
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
-    else:
-        # Removed emoji from warning message
-        st.warning("SYSTEM ALERT: Input required. Please provide text before initiating analysis.")
+        else:
+            st.warning("SYSTEM ALERT: Input required. Please enter text in the 'SYSTEM INPUT' tab before initiating analysis.")
 
-# 3. FOOTER
+# 4. FOOTER
 st.markdown("---")
-# Cleaned up footer text
-st.markdown('<p class="st-emotion-detector-caption">ENGINEERING BY CSE-A | DEPLOYED SYSTEM v1.2</p>', unsafe_allow_html=True)
+st.markdown('<p class="st-emotion-detector-caption">ENGINEERING BY CSE-A | DEPLOYED SYSTEM v1.3</p>', unsafe_allow_html=True)
