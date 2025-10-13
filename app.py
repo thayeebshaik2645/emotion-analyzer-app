@@ -29,7 +29,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (Updated Fonts) ---
+# --- CUSTOM CSS (Updated with GLOWING EFFECT) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
@@ -45,23 +45,22 @@ st.markdown("""
         --text-color-light: #f0f0f0; /* Light Text */
         --text-color-secondary: #aaaaaa; /* Gray Text */
         
-        /* UPDATED FONTS */
         --main-font: 'Poppins', sans-serif; 
         --mono-font: 'Fira Code', monospace; 
     }
     
     /* --- EMOTION SPECIFIC COLOR MAP --- */
-    .emotion-anger, .emotion-disgust { --emotion-color: #ff3366; } /* Red/Pink */
-    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #fffb00; } /* Neon Yellow */
-    .emotion-sadness, .emotion-loneliness { --emotion-color: #00aaff; } /* Blue */
-    .emotion-fear, .emotion-surprise { --emotion-color: #ff00ff; } /* Magenta/Purple */
-    .emotion-neutral { --emotion-color: var(--primary-color); } /* Primary Cyan */
+    .emotion-anger, .emotion-disgust { --emotion-color: #ff3366; }
+    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #fffb00; }
+    .emotion-sadness, .emotion-loneliness { --emotion-color: #00aaff; }
+    .emotion-fear, .emotion-surprise { --emotion-color: #ff00ff; }
+    .emotion-neutral { --emotion-color: var(--primary-color); }
     
-    /* 3. OVERALL LAYOUT & BACKGROUND - NOW USING Poppins */
+    /* 3. OVERALL LAYOUT & BACKGROUND */
     .main {
         background: var(--background-dark);
         padding: 2.5rem 4rem; 
-        font-family: var(--main-font); /* Applied new main font */
+        font-family: var(--main-font);
         color: var(--text-color-light); 
     }
     .stApp .st-emotion-cache-1pxn4ip, .stApp .st-emotion-cache-1v0pmnt {
@@ -72,24 +71,32 @@ st.markdown("""
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     }
 
-    /* 4. TITLES & TEXT EFFECTS - Poppins is bold and impactful */
+    /* 4. TITLES & TEXT EFFECTS */
     h1 {
         color: var(--primary-color);
-        font-weight: 800; /* Poppins bold weight */
+        font-weight: 800;
         text-align: center;
         text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-dark); 
         letter-spacing: 2px;
     }
-    h2, h3 {
+    
+    /* --- GLOWING EFFECT ON SUBHEADER (h3) --- */
+    h3 {
         color: var(--text-color-light);
-        font-weight: 600; /* Poppins semi-bold */
+        font-weight: 600; 
         padding-left: 5px; 
         border-left: 5px solid var(--primary-color); 
         margin-top: 2rem;
         margin-bottom: 1rem;
+        
+        /* Apply Neon Glow Effect */
+        text-shadow: 
+            0 0 4px var(--primary-color), 
+            0 0 8px var(--primary-color), 
+            0 0 12px var(--primary-dark);
     }
 
-    /* 5. TEXT AREA EFFECTS - Now using Fira Code */
+    /* 5. TEXT AREA EFFECTS */
     textarea {
         border-radius: 10px !important;
         border: 2px solid var(--primary-dark) !important;
@@ -97,12 +104,12 @@ st.markdown("""
         background-color: var(--surface-color) !important;
         color: var(--primary-color) !important;
         font-size: 17px !important; 
-        font-family: var(--mono-font) !important; /* Applied new mono font */ 
+        font-family: var(--mono-font) !important; 
         line-height: 1.6; 
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
     }
 
-    /* 6. BUTTON EFFECTS (Retained) */
+    /* 6. BUTTON EFFECTS */
     div.stButton > button:first-child {
         background: var(--primary-dark);
         color: var(--background-dark);
@@ -120,6 +127,22 @@ st.markdown("""
     }
     
     /* 7. CUSTOM RESULT CARDS */
+    .result-text {
+        color: var(--text-color-light);
+        font-family: var(--main-font); 
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        font-style: italic;
+    }
+
+    .result-confidence {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-color-secondary);
+        font-family: var(--mono-font); 
+    }
+
+    /* Other result card CSS remains the same... */
     .result-card {
         background-color: var(--surface-color);
         border: 2px solid var(--emotion-color, var(--primary-dark)); 
@@ -147,14 +170,6 @@ st.markdown("""
         box-shadow: 0 0 10px var(--emotion-color);
     }
 
-    .result-text {
-        color: var(--text-color-light);
-        font-family: var(--main-font); /* Applied new main font */
-        font-size: 1.1rem;
-        margin-bottom: 10px;
-        font-style: italic;
-    }
-
     .result-emotion {
         display: inline-block;
         font-size: 1.2rem;
@@ -165,13 +180,6 @@ st.markdown("""
         border-radius: 6px;
         text-transform: uppercase;
         box-shadow: 0 0 5px var(--emotion-color);
-    }
-    
-    .result-confidence {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-color-secondary);
-        font-family: var(--mono-font); /* Applied new mono font */
     }
 
     /* 8. DIVIDER & FOOTER */
@@ -229,6 +237,7 @@ st.markdown("---")
 # 1. INPUT BLOCK
 input_container = st.container()
 with input_container:
+    # THIS HEADER NOW HAS THE GLOW EFFECT
     st.subheader("⌨️ PUT YOUR TEXT HERE")
     
     col1, col_input, col2 = st.columns([1, 4, 1])
