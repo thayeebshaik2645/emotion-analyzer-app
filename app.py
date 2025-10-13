@@ -29,24 +29,25 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (Updated with GLOWING EFFECT) ---
+# --- CUSTOM CSS (Updated Fonts for h3) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
     /* 1. FONT IMPORTS */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Fira+Code:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Fira+Code:wght@400;600&family=Montserrat:wght@700;900&display=swap');
     
     /* 2. COLOR PALETTE DEFINITION (DARK/NEON) */
     :root {
-        --primary-color: #00ffc8; /* Neon Cyan/Green Accent */
-        --primary-dark: #00b38c;  /* Darker Neon */
-        --background-dark: #121212; /* Very Dark Background */
-        --surface-color: #1e1e1e; /* Card/Container Background */
-        --text-color-light: #f0f0f0; /* Light Text */
-        --text-color-secondary: #aaaaaa; /* Gray Text */
+        --primary-color: #00ffc8; 
+        --primary-dark: #00b38c;  
+        --background-dark: #121212; 
+        --surface-color: #1e1e1e; 
+        --text-color-light: #f0f0f0; 
+        --text-color-secondary: #aaaaaa; 
         
         --main-font: 'Poppins', sans-serif; 
         --mono-font: 'Fira Code', monospace; 
+        --header-font: 'Montserrat', sans-serif; /* New font for header */
     }
     
     /* --- EMOTION SPECIFIC COLOR MAP --- */
@@ -60,7 +61,7 @@ st.markdown("""
     .main {
         background: var(--background-dark);
         padding: 2.5rem 4rem; 
-        font-family: var(--main-font);
+        font-family: var(--main-font); 
         color: var(--text-color-light); 
     }
     .stApp .st-emotion-cache-1pxn4ip, .stApp .st-emotion-cache-1v0pmnt {
@@ -80,16 +81,17 @@ st.markdown("""
         letter-spacing: 2px;
     }
     
-    /* --- GLOWING EFFECT ON SUBHEADER (h3) --- */
+    /* --- GLOWING EFFECT & NEW FONT ON SUBHEADER (h3) --- */
     h3 {
         color: var(--text-color-light);
-        font-weight: 600; 
+        font-family: var(--header-font); /* Applied new Montserrat font */
+        font-weight: 700; 
         padding-left: 5px; 
         border-left: 5px solid var(--primary-color); 
         margin-top: 2rem;
         margin-bottom: 1rem;
         
-        /* Apply Neon Glow Effect */
+        /* Neon Glow Effect */
         text-shadow: 
             0 0 4px var(--primary-color), 
             0 0 8px var(--primary-color), 
@@ -142,7 +144,6 @@ st.markdown("""
         font-family: var(--mono-font); 
     }
 
-    /* Other result card CSS remains the same... */
     .result-card {
         background-color: var(--surface-color);
         border: 2px solid var(--emotion-color, var(--primary-dark)); 
@@ -237,7 +238,7 @@ st.markdown("---")
 # 1. INPUT BLOCK
 input_container = st.container()
 with input_container:
-    # THIS HEADER NOW HAS THE GLOW EFFECT
+    # INPUT HEADER WITH GLOW AND NEW FONT
     st.subheader("⌨️ PUT YOUR TEXT HERE")
     
     col1, col_input, col2 = st.columns([1, 4, 1])
@@ -247,8 +248,9 @@ This is confusing; I need someone to clarify the instructions for step three.
 My heart is racing, I'm genuinely terrified of what might happen next."""
     
     with col_input:
+        # REMOVED LABEL, kept the text_area
         input_text = st.text_area(
-            "Text Box - Write one sentence on each line:",
+            "", # Label removed
             value=default_text,
             height=200,
             key="input_text_area"
