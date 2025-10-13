@@ -211,8 +211,8 @@ st.markdown("""
 def initialize_classifier():
     """Load and cache the transformer model."""
     try:
-        # Custom message style for loading
-        st.markdown(f'<div style="color: {st.get_style().get("colors", {}).get("primary", "#00ffc8")}; font-family: var(--mono-font);">Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
+        # Custom message style for loading - using CSS variable directly
+        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);">Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
         classifier = pipeline(
             "text-classification",
             model=MODEL_NAME,
@@ -241,7 +241,8 @@ def detect_emotions(classifier, texts):
 
 # --- HEADER ---
 st.title("🧠 EMOTION DETECTOR FROM TEXT")
-st.markdown(f'<p style="color: {st.get_style().get("colors", {}).get("secondary", "#aaaaaa")}; text-align: center; font-family: var(--mono-font);">Analyze sentiment in text with a futuristic, neon glow interface.</p>', unsafe_allow_html=True)
+# FIX: Replaced st.get_style() with direct CSS variable and standard text
+st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">Analyze sentiment in text with a futuristic, neon glow interface.</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
