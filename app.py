@@ -5,126 +5,122 @@ from transformers import pipeline
 # --- Configuration ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
-# --- MINIONS COLOR PALETTE ---
-# Based on Minions (Yellow, Blue, Gray)
-MINION_YELLOW = "#FCE029"  # Minion Skin/Body
-MINION_BLUE = "#0A75BC"     # Overalls
-MINION_GRAY = "#949699"     # Goggles/Metals
-MINION_DARK = "#231F20"     # Raisin Black (Glove/Shadows)
+# --- RETRO CALM COLOR PALETTE ---
+# (Kept for visual consistency)
+COLOR_AQUA = "#81D8D0"     # Primary Button/Accent
+COLOR_PEACH = "#D99E82"    # Secondary Accent/Card Background
+COLOR_KHAKI = "#D7D982"    # Subtle Highlight/Light Border
+COLOR_PURPLE = "#AE82D9"   # Main Title/Text Highlight
+COLOR_DARK = "#333333"     # Text/Shadows
 
-# Mapping for UI Enhancement: Icons and Emojis
-EMOTION_ICONS = {
-    "JOY": "😄",
-    "SADNESS": "😢",
-    "ANGER": "😡",
-    "FEAR": "😨",
-    "SURPRISE": "😮",
-    "DISGUST": "🤢",
-    "NEUTRAL": "😐"
+# --- GIF MAPPING (New Feature) ---
+# Using external, common GIF URLs for animated expression
+GIF_ICONS = {
+    "JOY": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1eXR6bW5qNjBna25rYjYxc2xwdmwwOXQ4c3RzYjB4OXVwMXd4dCZlcD12MV9pbnRlcm5hbF9naWYmY3Q9cw/WlDW2jYx9N5z2V1u60/giphy.gif", # Happy Face
+    "SADNESS": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ2dpcjZzd2F5Z254enJ4b3Z5dG5wY2o3b284eXh5NWx0MWRwMXU4ZCZlcD12MV9pbnRlcm5hbF9naWYmY3Q9cw/wI8kC8eD124GvKjD0p/giphy.gif", # Crying Face
+    "ANGER": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXV0OHc2eGozN3Z0cW05Z2ZlYzZ0a2w3Nzhia2EwNWlvdG5sZmF1ZCZlcD12MV9pbnRlcm5hbF9naWYmY3Q9cw/Q7yH1m0c313zO/giphy.gif", # Angry Red Face
+    "FEAR": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTBqc3V0cm5td3V5YXF0czRtc2R0eW12MDBkdG1pZWcyY3Q0d3gxdSZlcD12MV9pbnRlcm5hbF9naWYmY3Q9cw/26FL35n484B6F00jC/giphy.gif", # Scared/Sweating
+    "SURPRISE": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWQ4eWVwM2Nwa204Y3h0N3Vob2U3NXBxZnd0eTR4ZHZ2Yjd1aWw4YSZlcD12MV9pbnRlcm5hbF9naWYmY3Q9cw/3o7TKM74MxC02VWrks/giphy.gif", # Mind Blown/Surprised
+    "DISGUST": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExc29lYnQycm95bXN0bmFnb21sMXN4d3g0bmFhMW8xcjNyN3lwNDJ3biZlcD12MV9pbnRlcm5hbF9naWYmY3Q9cw/PWHKk7D4xH6U/giphy.gif", # Green Sick Face
+    "NEUTRAL": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2R4d3N1OHY3N2k1eWpjaWdvbnY1eHp1Z281N2Q3NG41b2kwaWc3eCZlcD12MV9pbnRlcm5hbF9naWYmY3Q9cw/6u31D8I2aHjVq/giphy.gif" # Meh/Shrugging
 }
 
-# --- MINIONS CUSTOM CSS STYLING ---
+# --- STATIC EMOJI MAPPING (Still needed for the main table) ---
+EMOTION_EMOJIS = {
+    "JOY": "😊",
+    "SADNESS": "😔",
+    "ANGER": "😠",
+    "FEAR": "😨",
+    "SURPRISE": "😲",
+    "DISGUST": "🤢",
+    "NEUTRAL": "😶"
+}
+
+# --- RETRO CALM CUSTOM CSS STYLING (The core UI remains the same) ---
 def inject_custom_css():
-    """Injects custom CSS for a bright, Minions-themed UI."""
+    """Injects custom CSS for a Retro Calm, professional theme."""
     st.markdown(
         f"""
         <style>
-        /* BASE THEME OVERRIDES (Light background, Minions colors) */
+        /* Base Styling */
         .stApp {{
             background-color: #FFFFFF;
-            color: {MINION_DARK};
+            color: {COLOR_DARK};
+            font-family: serif; 
         }}
         
-        /* 1. Typography and Headings */
+        /* Headings */
         h1, h2, h3, h4 {{
-            color: {MINION_BLUE}; /* Blue for headings */
+            color: {COLOR_DARK}; 
+            font-weight: 700;
         }}
-        
-        /* 2. Main Title Styling */
         h1 {{
-            border-bottom: 3px solid {MINION_YELLOW}; /* Thick yellow line */
+            color: {COLOR_PURPLE}; 
+            border-bottom: 2px solid {COLOR_AQUA}; 
             padding-bottom: 15px;
-            font-family: 'Comic Sans MS', cursive, sans-serif; /* Playful font */
-            text-shadow: 2px 2px {MINION_GRAY};
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            letter-spacing: -1px; 
         }}
         
-        /* 3. Streamlit Metrics (Emotion Summary Cards) */
+        /* Streamlit Metrics (Emotion Summary Cards) */
         div[data-testid="stMetric"] {{
-            background-color: {MINION_YELLOW}; /* Yellow background for cards */
+            background-color: {COLOR_PEACH}; 
             padding: 15px;
-            border-radius: 15px; /* Rounded and chunky */
-            border: 3px solid {MINION_BLUE}; /* Blue border */
-            box-shadow: 5px 5px 0px {MINION_DARK}; /* Fun, thick shadow effect */
-            transition: all 0.1s ease-in-out;
-            transform: skew(-2deg); /* SLIGHT playful tilt */
+            border-radius: 8px;
+            border: 1px solid {COLOR_KHAKI}; 
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); 
+            transition: all 0.3s ease-in-out;
+            /* Added margin-bottom to separate metric from the GIF */
+            margin-bottom: 5px; 
         }}
         div[data-testid="stMetric"]:hover {{
-            background-color: #FFEB63; 
-            box-shadow: 2px 2px 0px {MINION_DARK};
-            transform: skew(0deg); /* Straightens on hover */
+            background-color: #E6B5A1;
+            border-color: {COLOR_PURPLE};
         }}
         
-        /* Adjust metric value/label colors */
+        /* Metric Text Contrast */
         div[data-testid="stMetricLabel"] > div {{
-            color: {MINION_DARK} !important;
-            font-weight: 800;
+            color: {COLOR_DARK} !important;
+            font-weight: 600;
         }}
         div[data-testid="stMetricValue"] {{
-            color: {MINION_BLUE} !important;
-            font-size: 2.2em;
-            font-weight: 900;
+            color: {COLOR_DARK} !important;
+            font-size: 2em;
+            font-weight: 700;
         }}
         
-        /* 4. Text Area and Input Styling */
-        textarea {{
-            background-color: #FFFFF0;
-            color: {MINION_DARK};
-            border-radius: 8px;
-            border: 2px solid {MINION_GRAY};
-        }}
-        
-        /* 5. Primary Button Styling (The big overall blue button!) */
+        /* Primary Button Styling (Aqua emphasis) */
         .stButton button {{
-            background-color: {MINION_BLUE}; 
-            color: {MINION_YELLOW}; /* Yellow text on blue */
-            border-radius: 10px;
-            border: 2px solid {MINION_DARK};
+            background-color: {COLOR_AQUA}; 
+            color: {COLOR_DARK}; 
+            border-radius: 6px;
+            border: none;
             padding: 10px 20px;
-            font-weight: 900;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
             transition: background-color 0.2s;
         }}
         .stButton button:hover {{
-            background-color: #005F99;
+            background-color: #63C7BC;
             color: white;
-            border-color: {MINION_YELLOW};
         }}
 
-        /* 6. Tabs Styling */
+        /* Tabs Styling */
         div[role="tablist"] button {{
-            font-weight: 800;
-            color: {MINION_DARK};
+            font-weight: 600;
+            color: {COLOR_DARK};
         }}
         div[data-testid="stTabs"] div[aria-selected="true"] button {{
-            border-bottom-color: {MINION_YELLOW} !important; /* Active tab underline */
-            color: {MINION_BLUE} !important;
+            border-bottom-color: {COLOR_AQUA} !important; 
+            color: {COLOR_PURPLE} !important; 
         }}
         
-        /* 7. Expander (Input Section) Styling */
-        .streamlit-expanderHeader {{
-            background-color: #F8F8F8;
-            border-radius: 10px;
-            border: 1px solid {MINION_GRAY};
-            padding: 10px;
-            font-weight: 600;
-            color: {MINION_DARK};
-        }}
-        
-        /* 8. Dataframe (Table) Styling */
-        .stDataFrame {{
-            border-radius: 8px;
-            border: 2px solid {MINION_GRAY};
+        /* General Box Styling */
+        .streamlit-expanderHeader, .stDataFrame {{
+            border-radius: 6px;
+            border: 1px solid {COLOR_KHAKI};
         }}
         
         </style>
@@ -132,7 +128,7 @@ def inject_custom_css():
         unsafe_allow_html=True
     )
 
-# --- Core Functions (Based on the original code, adapted for UI data) ---
+# --- Core Functions ---
 
 @st.cache_resource
 def initialize_classifier():
@@ -163,20 +159,16 @@ def detect_emotions(classifier, texts):
         best_prediction = max(prediction_list, key=lambda x: x['score'])
         
         dominant_emotion = best_prediction['label'].upper()
-        icon = EMOTION_ICONS.get(dominant_emotion, "❓")
+        # Use static emoji for the clean table view
+        emoji = EMOTION_EMOJIS.get(dominant_emotion, "❓")
         
-        # NOTE: Confidence Score must be a float for st.column_config.ProgressColumn
         row = {
             'Input Text': text,
-            # UI Enhancement: Prepend icon to the emotion
-            'Dominant Emotion': f"{icon} {dominant_emotion}",
-            # Use float here for the progress bar
+            'Dominant Emotion': f"{emoji} {dominant_emotion}",
             'Confidence Score': float(f"{best_prediction['score']:.4f}"),
-            # Added for internal count tracking
             'Raw Emotion Label': dominant_emotion 
         }
 
-        # Include all scores for the Advanced tab
         for item in prediction_list:
             row[f"Score - {item['label'].upper()}"] = f"{item['score']:.4f}"
 
@@ -184,29 +176,29 @@ def detect_emotions(classifier, texts):
 
     return results
 
-# --- Streamlit Application Layout (Utilizing the Minions Theme) ---
+# --- Streamlit Application Layout (Applying GIF Enhancement) ---
 
-# Inject CSS at the very start
+# Inject CSS
 inject_custom_css()
 
 # 1. Page Configuration and Title
 st.set_page_config(
-    page_title="Minions Emotion Detector",
+    page_title="Retro Calm Emotion Detector",
     layout="wide",
     initial_sidebar_state="auto"
 )
 
-st.title("🍌 Minion Language Detector: POOPAYE!")
+st.title("Retro Calm Emotion Analyzer")
 st.markdown(f"""
-<span style='color:{MINION_BLUE}; font-weight: bold;'>Analyze the emotional tone of your text</span> using the **`{MODEL_NAME}`** model.
+<span style='color:{COLOR_DARK};'>This tool uses the pre-trained Hugging Face model **`{MODEL_NAME}`** to classify emotions in text.</span>
 """, unsafe_allow_html=True)
 
-# 2. Model Initialization (called once and cached)
+# 2. Model Initialization
 classifier = initialize_classifier()
 st.markdown("---")
 
-# 3. Input Area (Styled by CSS)
-with st.expander("📝 **BEE DO! Enter Text(s) for Analysis**", expanded=True):
+# 3. Input Area
+with st.expander("📝 **Enter Text(s) for Analysis**", expanded=True):
     default_text = (
         "I am so incredibly happy and proud of what we achieved today!\n"
         "This is confusing; I need someone to clarify the instructions for step three.\n"
@@ -237,18 +229,18 @@ with st.expander("📝 **BEE DO! Enter Text(s) for Analysis**", expanded=True):
 
 st.markdown("---")
 
-# 4. Analysis Logic and Results Display (Styled by CSS)
+# 4. Analysis Logic and Results Display
 if analyze_button:
     if input_texts:
-        st.subheader("🍌 Results: KAI-FU-RU!")
+        st.subheader("Analysis Results")
         with st.spinner(f"Analyzing {len(input_texts)} sentence(s)..."):
             detection_results = detect_emotions(classifier, input_texts)
 
             if detection_results:
                 df = pd.DataFrame(detection_results)
                 
-                # --- Emotion Count Metrics (Utilizing the styled stMetric cards) ---
-                st.markdown("#### Dominant Emotions Summary")
+                # --- GIF EMOTION COUNT SUMMARY (Enhanced UI with GIFs) ---
+                st.markdown("#### Dominant Emotions Summary (Animated)")
                 
                 emotion_counts = df['Raw Emotion Label'].value_counts()
                 
@@ -257,10 +249,17 @@ if analyze_button:
 
                 for i, (emotion, count) in enumerate(emotion_counts.items()):
                     if i < 7:
-                        icon = EMOTION_ICONS.get(emotion, "")
+                        # 1. Display the count metric (styled card)
                         cols[i].metric(
-                            label=f"{icon} {emotion.capitalize()}", 
+                            label=f"{emotion.capitalize()}", 
                             value=count
+                        )
+                        # 2. Display the GIF beneath the metric (NEW FEATURE)
+                        gif_url = GIF_ICONS.get(emotion, GIF_ICONS['NEUTRAL'])
+                        cols[i].image(
+                            gif_url,
+                            width=50, # Set a small, fixed size for the GIF
+                            caption=None # Hide the caption
                         )
 
                 st.markdown("---")
@@ -268,11 +267,9 @@ if analyze_button:
                 # --- Tabular Results with Progress Bar ---
                 st.markdown("#### Detailed Analysis Table")
                 
-                # Using tabs for cleaner organization
                 tab_simple, tab_advanced = st.tabs(["Simple Results", "All Confidence Scores"])
 
                 with tab_simple:
-                    # Keep only essential columns for the simple view
                     simple_df = df.drop(columns=['Raw Emotion Label']) 
                     simple_df = simple_df[['Input Text', 'Dominant Emotion', 'Confidence Score']]
                     
@@ -293,7 +290,6 @@ if analyze_button:
                     )
                 
                 with tab_advanced:
-                    # Drop UI helper columns for the raw data view
                     advanced_df = df.drop(columns=['Dominant Emotion', 'Confidence Score', 'Raw Emotion Label'])
                     st.dataframe(
                         advanced_df,
@@ -307,4 +303,4 @@ if analyze_button:
         st.warning("Please enter some text to analyze before clicking the button.")
 
 st.markdown("---")
-st.caption("Powered by Streamlit and Hugging Face Transformers. TULALILOO TI AMO!")
+st.caption("Application powered by Streamlit and Hugging Face Transformers. Animated icons via Giphy.")
