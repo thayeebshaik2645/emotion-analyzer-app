@@ -13,7 +13,6 @@ st.set_page_config(
 )
 
 # --- CUSTOM CSS (DARK/NEON THEME & Font Overhaul) ---
-# NOTE: This CSS is identical to the last corrected version.
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
@@ -76,7 +75,7 @@ st.markdown("""
         border-radius: 8px;
         box-shadow: 0 0 5px var(--primary-dark);
     }
-
+    
     /* 4. TEXT AREA EFFECTS */
     .stTextArea label {
         font-weight: 600;
@@ -122,7 +121,7 @@ st.markdown("""
         box-shadow: 0 0 25px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
-    /* 6. DATAFRAME EFFECTS & EMOTION COLORS */
+    /* 6. DATAFRAME STYLING (Kept for the st.info box's internal styling) */
     .stDataFrame {
         border-radius: 10px !important; 
         box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.7); 
@@ -131,33 +130,6 @@ st.markdown("""
         background-color: var(--surface-color); 
     }
     
-    .stDataFrame .data-row, .stDataFrame th, .stDataFrame td {
-        color: var(--text-color-light) !important;
-        font-family: var(--mono-font) !important; 
-    }
-
-    /* --- EMOTION SPECIFIC COLORING (Cyberpunk/Neon Tones) --- */
-    [data-testid="stDataframe"] div:nth-child(3) > div:not(:first-child) { 
-        font-weight: 800 !important;
-        padding: 6px 10px !important;
-        border-radius: 6px;
-        text-align: center;
-        margin: 4px 0;
-        display: inline-block;
-        min-width: 110px;
-        transition: all 0.3s ease; 
-        text-shadow: 0 0 2px black;
-        font-family: 'Inter', sans-serif !important;
-    }
-
-    /* Color definitions */
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("ANGER"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("DISGUST") { background-color: #ff3366; color: var(--background-dark); box-shadow: 0 0 8px #ff3366;}
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("JOY"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("HAPPINESS"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("EXCITEMENT") { background-color: #fffb00; color: var(--background-dark); box-shadow: 0 0 8px #fffb00;}
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("SADNESS"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("LONELINESS") { background-color: #00aaff; color: var(--background-dark); box-shadow: 0 0 8px #00aaff;}
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("FEAR"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("SURPRISE") { background-color: #ff00ff; color: var(--background-dark); box-shadow: 0 0 8px #ff00ff;}
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("NEUTRAL") { background-color: var(--primary-color); color: var(--background-dark); box-shadow: 0 0 8px var(--primary-color);}
-
-
     /* 7. DIVIDER & FOOTER */
     hr {
         border: 0;
@@ -191,7 +163,7 @@ def initialize_classifier():
     """Load and cache the transformer model."""
     try:
         # Custom message style for loading
-        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);"> Please wait.</div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);">SYSTEM STATUS: Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
         classifier = pipeline(
             "text-classification",
             model=MODEL_NAME,
@@ -219,7 +191,7 @@ def detect_emotions(classifier, texts):
     return results
 
 # =================================================================
-# --- FUTURISTIC UI LAYOUT CHANGES ---
+# --- FUTURISTIC UI LAYOUT ---
 # =================================================================
 
 st.title("🧠 EMOTION DETECTOR FROM TEXT")
@@ -227,7 +199,7 @@ st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; 
 
 st.markdown("---")
 
-# 1. INPUT BLOCK (Centralized and clearly bordered)
+# 1. INPUT BLOCK (Terminal style)
 input_container = st.container()
 with input_container:
     st.subheader("📝 ENTER THE INPUT")
@@ -258,45 +230,35 @@ classifier = initialize_classifier()
 
 st.markdown("---")
 
-# 2. RESULTS BLOCK (Conditional display)
+# 2. RESULTS BLOCK (Conditional display - SIMPLIFIED)
 if analyze:
     if texts:
         results_container = st.container()
         with results_container:
-            st.subheader("📊 OUTPUT DATA LOG")
+            st.subheader("📊 ANALYSIS SUMMARY")
             
-            # Use columns for a structured, dashboard look
-            col_graph, col_data = st.columns([1, 2])
+            # Use columns to keep the summary centered/structured
+            col_left, col_summary, col_right = st.columns([1, 2, 1])
             
             with st.spinner("Processing data... Stand by."):
                 results = detect_emotions(classifier, texts)
                 df = pd.DataFrame(results)
                 
-                # --- Dominant Emotion Summary (Left Column) ---
+                # --- Dominant Emotion Summary ---
                 dominant_emotion = df['Dominant Emotion'].mode()[0]
                 total_sentences = len(df)
                 
-                with col_graph:
+                with col_summary:
                     st.info(f"""
                         **SYSTEM SUMMARY**
-                        - **Total Entries:** {total_sentences}
-                        - **Most Frequent:** {dominant_emotion}
+                        - **Total Entries:** **{total_sentences}**
+                        - **Most Frequent Emotion:** **{dominant_emotion}**
+                        - **Raw Output Data Log Removed per protocol request.**
                         """)
                     
-                    # You could add a simple bar chart here for more UI
-                    # df_count = df['Dominant Emotion'].value_counts().reset_index()
-                    # df_count.columns = ['Emotion', 'Count']
-                    # st.bar_chart(df_count, x='Emotion', y='Count', color='#00ffc8')
-
-                # --- Detailed Log Table (Right Column) ---
-                with col_data:
-                    st.markdown("#### Detailed Analysis Log:")
-                    st.dataframe(df, hide_index=True, use_container_width=True)
     else:
         st.warning("Input required. Please provide text before initiating analysis.")
 
 # 3. FOOTER
 st.markdown("---")
 st.markdown('<p class="st-emotion-detector-caption"> BUILD BY CSE-A</p>', unsafe_allow_html=True)
-
-
