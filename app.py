@@ -6,18 +6,21 @@ from transformers import pipeline
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
 # --- EMOTION GIF MAPPING ---
-# NOTE: Using placeholder URLs. Replace these with your actual GIF links!
+# Mappings using the URLs provided by the user.
 EMOTION_GIFS = {
-    "ANGER": "https://i.giphy.com/media/l4pTsh45DG7rivt2e/giphy.gif",          # Red/Pink GIF
-    "DISGUST": "https://i.giphy.com/media/26hirEBLl0l0Qk2s8/giphy.gif",       # Red/Pink GIF
-    "JOY": "https://i.giphy.com/media/l4FGp6wB6vR22yO64/giphy.gif",           # Neon Yellow GIF
-    "HAPPINESS": "https://i.giphy.com/media/l4FGp6wB6vR22yO64/giphy.gif",     # Neon Yellow GIF
-    "EXCITEMENT": "https://i.giphy.com/media/3o7TKr6wQjG123uRkk/giphy.gif",    # Neon Yellow GIF
-    "SADNESS": "https://i.giphy.com/media/9Y50g67K1LwY/giphy.gif",            # Blue GIF
-    "LONELINESS": "https://i.giphy.com/media/3o6UBd3M910D6F1Jle/giphy.gif",    # Blue GIF
-    "FEAR": "https://i.giphy.com/media/26tk05W9Y83y2h4wE/giphy.gif",          # Magenta/Purple GIF
-    "SURPRISE": "https://i.giphy.com/media/l4FGp2K4t9mX9sJiw/giphy.gif",      # Magenta/Purple GIF
-    "NEUTRAL": "https://i.giphy.com/media/3ohzdM722421LqV1e8/giphy.gif",       # Primary Cyan GIF
+    # User-provided URLs
+    "ANGER": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29sb29oMWNzYjk4ZnRlMTlkenBmNTd1dmZjemVjaGI0Z21oYXRvZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jsNiI5nMGQurggwpkN/giphy.webp",
+    "HAPPINESS": "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNDV5djV3enNnd3kzcXAxdzFydjYxOWN4aWRwOTMzbW50aHN1azQzcyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/USR9bpLz893PYVHk7C/giphy.webp",
+    "SADNESS": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXlmdzVmNXdhemlwY2F4N2ZoZnJzaDM3bnBsOTk3ejkwZmtzZ2JtMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/StAnQV9TUCuys/giphy.webp",
+    "JOY": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MmZnc3Q0c2FoMXR6aDZtc2xxZG45dHhtbHY1Mms3bTFxbnk2eWJoeSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LN5bH1r7UEpSRbcN7M/giphy.webp",
+    "FEAR": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eTZ6YmNrZHV3OHd1OHhmcmlqOXVzMHJua2JjNXpwYWkxeTJ3bWp6bCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Gl7mfimOjkkGl5mMDS/giphy.webp",
+    "NEUTRAL": "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzRuY2I5dGM0ZnE4aG04NzZiMnY5aW4wdHZ1MXdpN3djeG1hd2t0byZlcD12MV9naWZzX3NlYXJjaCZjdD1n/7CXIO53h5YciXOp505/giphy.webp",
+    
+    # Mapped/Grouped Emotions
+    "DISGUST": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29sb29oMWNzYjk4ZnRlMTlkenBmNTd1dmZjemVjaGI0Z21oYXRvZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jsNiI5nMGQurggwpkN/giphy.webp", # Maps to ANGER
+    "EXCITEMENT": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MmZnc3Q0c2FoMXR6aDZtc2xxZG45dHhtbHY1Mms3bTFxbnk2eWJoeSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LN5bH1r7UEpSRbcN7M/giphy.webp", # Maps to JOY
+    "LONELINESS": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXlmdzVmNXdhemlwY2F4N2ZoZnJzaDM3bnBsOTk3ejkwZmtzZ2JtMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/StAnQV9TUCuys/giphy.webp", # Maps to SADNESS
+    "SURPRISE": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eTZ6YmNrZHV3OHd1OHhmcmlqOXVzMHJua2JjNXpwYWkxeTJ3bWp6bCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Gl7mfimOjkkGl5mMDS/giphy.webp", # Maps to FEAR
 }
 
 
@@ -44,11 +47,11 @@ st.markdown("""
     }
     
     /* --- EMOTION SPECIFIC COLOR MAP --- */
-    .emotion-anger, .emotion-disgust { --emotion-color: #ff3366; } 
-    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #fffb00; } 
-    .emotion-sadness, .emotion-loneliness { --emotion-color: #00aaff; } 
-    .emotion-fear, .emotion-surprise { --emotion-color: #ff00ff; } 
-    .emotion-neutral { --emotion-color: var(--primary-color); } 
+    .emotion-anger, .emotion-disgust { --emotion-color: #ff3366; } /* Red/Pink */
+    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #fffb00; } /* Neon Yellow */
+    .emotion-sadness, .emotion-loneliness { --emotion-color: #00aaff; } /* Blue */
+    .emotion-fear, .emotion-surprise { --emotion-color: #ff00ff; } /* Magenta/Purple */
+    .emotion-neutral { --emotion-color: var(--primary-color); } /* Primary Cyan */
     
     /* 2. OVERALL LAYOUT & BACKGROUND */
     .main {
@@ -270,7 +273,7 @@ if analyze:
                     input_text = result['Input Text']
                     
                     # 1. Get the GIF URL
-                    gif_url = EMOTION_GIFS.get(emotion, "https://i.giphy.com/media/l0HlC9N40qS03S48w/giphy.gif") # Fallback GIF
+                    gif_url = EMOTION_GIFS.get(emotion, EMOTION_GIFS["NEUTRAL"]) # Fallback to Neutral GIF
                     
                     # 2. Determine CSS class for coloring (lowercase emotion)
                     css_class = ""
