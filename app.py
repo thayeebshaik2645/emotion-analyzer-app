@@ -42,6 +42,8 @@ st.markdown("""
         border: 1px solid #cbd5e1 !important;
         padding: 10px !important;
         background-color: #ffffff !important;
+        color: #0f172a !important;   /* <-- Make text dark for visibility */
+        font-size: 16px !important;
     }
 
     /* --- Buttons --- */
