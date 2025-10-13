@@ -12,190 +12,193 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (Enhanced with Colors, Effects, and Animations) ---
+# --- CUSTOM CSS (DARK/NEON THEME - Font Overhaul Included) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
-    /* 1. COLOR PALETTE DEFINITION */
-    /* Primary: A deep, professional blue */
-    /* Secondary: A warm, modern gray */
+    /* 1. COLOR PALETTE DEFINITION (DARK/NEON) */
     :root {
-        --primary-color: #007bff; /* Bright Blue */
-        --primary-dark: #0056b3;  /* Dark Blue */
-        --secondary-color: #495057; /* Dark Gray */
-        --background-light: #f4f6f9; /* Off-White Background */
-        --border-color: #ced4da;
-        --shadow-color: rgba(0, 0, 0, 0.08);
+        --primary-color: #00ffc8; /* Neon Cyan/Green Accent */
+        --primary-dark: #00b38c;  /* Darker Neon */
+        --background-dark: #121212; /* Very Dark Background */
+        --surface-color: #1e1e1e; /* Card/Container Background */
+        --text-color-light: #f0f0f0; /* Light Text */
+        --text-color-secondary: #aaaaaa; /* Gray Text */
+        --mono-font: 'Consolas', 'Courier New', monospace; /* Futuristic Monospace Font */
     }
     
     /* ---------------------------------------------------- */
     /* 2. OVERALL LAYOUT & BACKGROUND */
     .main {
-        background: var(--background-light);
-        padding: 2.5rem 4rem; /* Slightly more spacious padding */
+        background: var(--background-dark);
+        padding: 2.5rem 4rem; 
         font-family: 'Inter', sans-serif;
-        transition: background-color 0.5s ease; /* Subtle background transition */
+        color: var(--text-color-light); 
+    }
+    .stText, .stMarkdown {
+        color: var(--text-color-light) !important;
     }
 
     /* 3. TITLES & TEXT EFFECTS */
     h1 {
-        color: var(--primary-dark);
+        color: var(--primary-color);
         font-weight: 900;
         text-align: center;
         margin-bottom: 0.5rem;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05); /* Subtle text shadow */
+        /* Neon Glow Effect */
+        text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-dark); 
+        letter-spacing: 2px;
     }
 
     h2, h3 {
-        color: var(--secondary-color);
+        color: var(--text-color-light);
         font-weight: 700;
-        padding-left: 5px; /* Indent for visual flow */
-        border-left: 5px solid var(--primary-color); /* Primary color accent line */
+        padding-left: 5px; 
+        border-left: 5px solid var(--primary-color); 
         margin-top: 2rem;
         margin-bottom: 1rem;
     }
 
-    /* 4. TEXT AREA EFFECTS */
-    /* Target the text input element */
+    /* 4. TEXT AREA EFFECTS (THE KEY CHANGE) */
     .stTextArea label {
         font-weight: 600;
-        color: var(--secondary-color);
+        color: var(--primary-color);
+        font-family: 'Inter', sans-serif; /* Keep label readable */
     }
 
+    /* Target the text input element itself */
     textarea {
-        border-radius: 12px !important;
-        border: 1px solid var(--border-color) !important;
+        border-radius: 10px !important;
+        border: 2px solid var(--primary-dark) !important;
         padding: 15px !important;
-        background-color: #ffffff !important;
-        color: #212529 !important;
-        font-size: 16px !important;
-        box-shadow: 0 4px 10px var(--shadow-color);
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition curve */
+        background-color: var(--surface-color) !important;
+        color: var(--primary-color) !important; /* Neon text color inside box */
+        font-size: 17px !important; /* Slightly larger for emphasis */
+        font-family: var(--mono-font) !important; /* Monospace/Code-like font */
+        line-height: 1.6; /* Increased line height for better reading */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
+        transition: all 0.3s ease;
     }
 
     textarea:focus {
         border: 2px solid var(--primary-color) !important;
-        box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25) !important; /* Prominent focus ring */
+        box-shadow: 0 0 15px var(--primary-color) !important; 
     }
 
-    /* 5. BUTTON EFFECTS (THE BIG ONE) */
+    /* 5. BUTTON EFFECTS (NEON GLOW) */
     div.stButton > button:first-child {
-        background: linear-gradient(135deg, var(--primary-color) 0%, #00aaff 100%);
-        color: white;
-        font-weight: 700;
-        border-radius: 12px;
-        padding: 0.8em 2em; /* Slightly larger padding */
-        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Bouncy transition */
+        background: var(--primary-dark);
+        color: var(--background-dark);
+        font-weight: 800;
+        border-radius: 10px;
+        padding: 0.8em 2em;
+        transition: all 0.4s ease;
         border: none;
-        box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3); /* Blue shadow for the button */
+        box-shadow: 0 0 15px var(--primary-color); 
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
     }
 
     div.stButton > button:first-child:hover {
-        /* Scale and move slightly up on hover (bouncy effect) */
-        transform: translateY(-4px) scale(1.02); 
-        box-shadow: 0 10px 20px rgba(0, 123, 255, 0.4); 
-        background: linear-gradient(135deg, var(--primary-dark) 0%, #0077cc 100%); /* Darker gradient on hover */
+        transform: translateY(-2px); 
+        background: var(--primary-color); 
+        box-shadow: 0 0 25px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
     div.stButton > button:first-child:active {
-        /* Push down slightly on click */
-        transform: translateY(0px) scale(1.0);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transform: translateY(0px);
+        box-shadow: 0 0 5px var(--primary-color);
     }
 
     /* 6. DATAFRAME EFFECTS & EMOTION COLORS */
     .stDataFrame {
-        border-radius: 16px !important; /* Slightly more rounded */
-        box-shadow: 0px 10px 25px rgba(0,0,0,0.15); /* Deeper shadow for a floating effect */
-        border: none; /* Remove default border, rely on shadow */
+        border-radius: 10px !important; 
+        box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.7); 
+        border: 1px solid var(--primary-dark); 
         overflow: hidden;
+        background-color: var(--surface-color); 
     }
     
-    /* Apply a slight hover effect to the entire dataframe container */
-    .stDataFrame:hover {
-        box-shadow: 0px 12px 30px rgba(0,0,0,0.2);
-        transform: translateY(-2px);
-        transition: all 0.3s ease-out;
+    /* Dataframe content text font */
+    .stDataFrame .data-row, .stDataFrame th, .stDataFrame td {
+        color: var(--text-color-light) !important;
+        font-family: var(--mono-font) !important; /* Use monospace font for results */
     }
 
-    /* --- EMOTION SPECIFIC COLORING (CRITICAL FOR UI ENHANCEMENT) --- */
-    /* Target the 'Dominant Emotion' column cells (Assuming it is the 3rd column) */
-    /* NOTE: .css-1r6cnx6 is a common Streamlit class for dataframe cells */
+    /* --- EMOTION SPECIFIC COLORING (Cyberpunk/Neon Tones) --- */
     [data-testid="stDataframe"] div:nth-child(3) > div:not(:first-child) { 
-        font-weight: 700 !important;
+        font-weight: 800 !important;
         padding: 6px 10px !important;
-        border-radius: 8px;
+        border-radius: 6px;
         text-align: center;
         margin: 4px 0;
         display: inline-block;
         min-width: 110px;
-        transition: background-color 0.4s ease; 
+        transition: all 0.3s ease; 
+        text-shadow: 0 0 2px black;
+        font-family: 'Inter', sans-serif !important; /* Emotion label stands out */
     }
 
-    /* 🔴 ANGER / DISGUST */
+    /* 🔴 ANGER / DISGUST (Fiery Red/Pink) */
     div[data-testid="stDataframe"] .css-1r6cnx6:contains("ANGER"),
     div[data-testid="stDataframe"] .css-1r6cnx6:contains("DISGUST") {
-        background-color: #ffe0e6; 
-        color: #880011; 
-        border: 1px solid #ff99aa;
+        background-color: #ff3366; 
+        color: var(--background-dark); 
+        box-shadow: 0 0 8px #ff3366;
     }
     
-    /* 🟡 JOY / HAPPINESS / EXCITEMENT */
+    /* 🟡 JOY / HAPPINESS / EXCITEMENT (Electric Yellow) */
     div[data-testid="stDataframe"] .css-1r6cnx6:contains("JOY"),
     div[data-testid="stDataframe"] .css-1r6cnx6:contains("HAPPINESS"),
     div[data-testid="stDataframe"] .css-1r6cnx6:contains("EXCITEMENT") {
-        background-color: #fff9e6; 
-        color: #996600; 
-        border: 1px solid #ffcc66;
+        background-color: #fffb00; 
+        color: var(--background-dark); 
+        box-shadow: 0 0 8px #fffb00;
     }
     
-    /* 🔵 SADNESS / LONELINESS */
+    /* 🔵 SADNESS / LONELINESS (Deep Cyber Blue) */
     div[data-testid="stDataframe"] .css-1r6cnx6:contains("SADNESS"),
     div[data-testid="stDataframe"] .css-1r6cnx6:contains("LONELINESS") {
-        background-color: #e6f7ff; 
-        color: #005c8c; 
-        border: 1px solid #99d6ff;
+        background-color: #00aaff; 
+        color: var(--background-dark); 
+        box-shadow: 0 0 8px #00aaff;
     }
     
-    /* 🟣 FEAR / SURPRISE */
+    /* 🟣 FEAR / SURPRISE (Vibrant Purple) */
     div[data-testid="stDataframe"] .css-1r6cnx6:contains("FEAR"),
     div[data-testid="stDataframe"] .css-1r6cnx6:contains("SURPRISE") {
-        background-color: #f2e6ff; 
-        color: #590099; 
-        border: 1px solid #cc99ff;
+        background-color: #ff00ff; 
+        color: var(--background-dark); 
+        box-shadow: 0 0 8px #ff00ff;
     }
 
-    /* ⚪ NEUTRAL / OTHER */
+    /* ⚪ NEUTRAL / OTHER (Primary Neon Color) */
     div[data-testid="stDataframe"] .css-1r6cnx6:contains("NEUTRAL") {
-        background-color: #e9ecef; 
-        color: #495057; 
-        border: 1px solid #c9c9c9;
+        background-color: var(--primary-color); 
+        color: var(--background-dark); 
+        box-shadow: 0 0 8px var(--primary-color);
     }
 
     /* 7. DIVIDER & FOOTER */
     hr {
         border: 0;
-        height: 1px;
-        background: linear-gradient(to right, rgba(0,0,0,0), var(--border-color), rgba(0,0,0,0)); /* Gradient divider */
+        height: 2px;
+        background: linear-gradient(to right, rgba(0,0,0,0), var(--primary-dark), rgba(0,0,0,0)); 
         margin: 3rem 0;
     }
     
     .st-emotion-detector-caption { 
         text-align: center;
-        color: #6c757d;
+        color: var(--text-color-secondary);
         font-style: italic;
         margin-top: 1rem;
-        animation: fadeIn 2s;
+        animation: fadeIn 3s;
     }
     
-    /* Keyframe for a soft fade-in effect */
     @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
     }
-    /* Hide Streamlit default footer/header for a cleaner look */
     footer, header {
         visibility: hidden !important;
     }
@@ -208,12 +211,13 @@ st.markdown("""
 def initialize_classifier():
     """Load and cache the transformer model."""
     try:
-        with st.spinner(f"Loading model `{MODEL_NAME}`..."):
-            classifier = pipeline(
-                "text-classification",
-                model=MODEL_NAME,
-                return_all_scores=True
-            )
+        # Custom message style for loading
+        st.markdown(f'<div style="color: {st.get_style().get("colors", {}).get("primary", "#00ffc8")}; font-family: var(--mono-font);">Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
+        classifier = pipeline(
+            "text-classification",
+            model=MODEL_NAME,
+            return_all_scores=True
+        )
         st.success("✅ Model loaded successfully!")
         return classifier
     except Exception as e:
@@ -236,16 +240,13 @@ def detect_emotions(classifier, texts):
     return results
 
 # --- HEADER ---
-st.title("🧠 Emotion Detector From Text")
-st.markdown("""
-Detect emotions in text using a fine-tuned Transformer model.
-Enter your sentences below and click **Analyze** to see the results!
-""")
+st.title("🧠 EMOTION DETECTOR FROM TEXT")
+st.markdown(f'<p style="color: {st.get_style().get("colors", {}).get("secondary", "#aaaaaa")}; text-align: center; font-family: var(--mono-font);">Analyze sentiment in text with a futuristic, neon glow interface.</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
 # --- INPUT ---
-st.subheader("📝Enter Text to Analyze")
+st.subheader("📝 ENTER TEXT TO ANALYZE")
 
 default_text = """I am so incredibly happy and proud of what we achieved today!
 This is confusing; I need someone to clarify the instructions for step three.
@@ -259,24 +260,24 @@ input_text = st.text_area(
 texts = [t.strip() for t in input_text.split("\n") if t.strip()]
 
 # --- ANALYZE BUTTON ---
-analyze = st.button("🔍 Analyze Emotions")
+analyze = st.button("🔍 INITIATE ANALYSIS")
 
-# Initialize classifier outside the conditional block to ensure it's ready
+# Initialize classifier
 classifier = initialize_classifier()
 
 # --- RESULTS ---
 if analyze:
     if texts:
-        st.subheader("📊 Step 2: Results")
-        with st.spinner("Analyzing emotions..."):
+        st.subheader("📊 ANALYSIS RESULTS")
+        with st.spinner("Processing data... Stand by."):
             results = detect_emotions(classifier, texts)
             df = pd.DataFrame(results)
             
             # Show table
             st.dataframe(df, hide_index=True, use_container_width=True)
     else:
-        st.warning("Please enter some text before clicking *Analyze*.")
+        st.warning("Input required. Please provide text before initiating analysis.")
 
 st.markdown("---")
-# Use custom markdown for the footer to apply the CSS class
-st.markdown('<p class="st-emotion-detector-caption">BUILD BY CSE-A</p>', unsafe_allow_html=True)
+# Custom footer for the fade-in effect
+st.markdown('<p class="st-emotion-detector-caption">SYSTEM ONLINE | BUILD BY CSE-A</p>', unsafe_allow_html=True)
