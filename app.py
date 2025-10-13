@@ -4,11 +4,13 @@ from transformers import pipeline
 
 # --- CONFIGURATION ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
+# Removed emojis from page_icon and all markdown text
 
 # --- PAGE SETUP ---
 st.set_page_config(
-    page_title="🧠 Emotion Detector From Text",
-    page_icon="https://p7.hiclipart.com/preview/573/335/801/stock-photography-robot-royalty-free-robots.jpg",
+    page_title="Emotion Detector From Text",
+    # Using a simple icon or removing it for cleaner look
+    page_icon="🤖", 
     layout="wide",
 )
 
@@ -42,7 +44,7 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
         color: var(--text-color-light); 
     }
-    .stText, .stMarkdown {
+    .stText, .stMarkdown, .stAlert, .stApp {
         color: var(--text-color-light) !important;
     }
     
@@ -72,6 +74,23 @@ st.markdown("""
         border-left: 5px solid var(--primary-color); 
         margin-top: 2rem;
         margin-bottom: 1rem;
+    }
+
+    /* System Status Messages */
+    .stSuccess {
+        background-color: transparent !important;
+        border: 1px solid var(--primary-dark) !important;
+        color: var(--primary-color) !important;
+    }
+    .stError {
+        background-color: transparent !important;
+        border: 1px solid #ff3366 !important;
+        color: #ff3366 !important;
+    }
+    .stWarning {
+        background-color: transparent !important;
+        border: 1px solid #fffb00 !important;
+        color: #fffb00 !important;
     }
 
     /* 4. TEXT AREA EFFECTS */
@@ -119,7 +138,7 @@ st.markdown("""
         box-shadow: 0 0 25px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
-    /* 6. NEW: CUSTOM RESULT CARDS (DATA BLOCKS) */
+    /* 6. CUSTOM RESULT CARDS (DATA BLOCKS) */
     .result-card {
         background-color: var(--surface-color);
         border: 2px solid var(--emotion-color, var(--primary-dark)); /* Use emotion color for border */
@@ -162,10 +181,6 @@ st.markdown("""
         color: var(--text-color-secondary);
         font-family: var(--mono-font);
     }
-    
-    /* Remove old dataframe CSS since it's no longer used for the final output */
-    .stDataFrame { display: none; }
-
 
     /* 7. DIVIDER & FOOTER */
     hr {
@@ -199,17 +214,19 @@ st.markdown("""
 def initialize_classifier():
     """Load and cache the transformer model."""
     try:
-        # Custom message style for loading
+        # Removed emoji, enhanced status message style
         st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);">SYSTEM STATUS: Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
         classifier = pipeline(
             "text-classification",
             model=MODEL_NAME,
             return_all_scores=True
         )
-        st.success("✅ SYSTEM STATUS: Model loaded successfully!")
+        # Removed emoji from success message
+        st.success("SYSTEM STATUS: Model loaded successfully!")
         return classifier
     except Exception as e:
-        st.error(f"Error loading model: {e}")
+        # Removed emoji from error message
+        st.error(f"SYSTEM FAILURE: Error loading model: {e}")
         st.stop()
 
 def detect_emotions(classifier, texts):
@@ -231,15 +248,14 @@ def detect_emotions(classifier, texts):
 # --- FUTURISTIC UI LAYOUT ---
 # =================================================================
 
-st.title("🧠 EMOTION DETECTOR FROM TEXT")
-st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">DETEC YOUR EMOTION FROM TEXT</p>', unsafe_allow_html=True)
+st.title("EMOTION DETECTOR FROM TEXT")
+st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">DEEP LEARNING TEXT ANALYSIS INTERFACE</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
 # 1. INPUT BLOCK (Terminal style)
-input_container = st.container()
-with input_container:
-    st.subheader("📝 ENTER THE INPUT")
+with st.container():
+    st.subheader("SYSTEM INPUT INTERFACE")
     
     col1, col_input, col2 = st.columns([1, 4, 1])
 
@@ -258,7 +274,8 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
         
         col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
         with col_btn:
-             analyze = st.button("🔍 INITIATE ANALYSIS", use_container_width=True)
+             # Removed emoji from button text
+             analyze = st.button("INITIATE ANALYSIS", use_container_width=True)
 
 # Initialize classifier
 classifier = initialize_classifier()
@@ -268,20 +285,21 @@ st.markdown("---")
 # 2. RESULTS BLOCK (Custom Data Blocks/Cards)
 if analyze:
     if texts:
-        results_container = st.container()
-        with results_container:
-            st.subheader("📊 DETAILED ANALYSIS LOG")
+        with st.container():
+            st.subheader("ANALYSIS OUTPUT: EMOTION LOG")
             
-            with st.spinner("Processing data... Stand by."):
+            with st.spinner("Processing data... Stand by. Executing high-speed classification."):
                 results = detect_emotions(classifier, texts)
                 
-                # --- NEW OUTPUT PATTERN: CUSTOM CARDS ---
-                for result in results:
+                # Use st.columns to create a two-column grid for the cards for better density
+                cols = st.columns(2)
+                
+                for i, result in enumerate(results):
                     emotion = result['Dominant Emotion'].lower()
                     confidence = result['Confidence']
                     input_text = result['Input Text']
                     
-                    # Map common emotions to single CSS class for coloring
+                    # Determine CSS class for coloring
                     css_class = ""
                     if emotion in ["anger", "disgust"]: css_class = "emotion-anger"
                     elif emotion in ["joy", "happiness", "excitement"]: css_class = "emotion-joy"
@@ -289,25 +307,26 @@ if analyze:
                     elif emotion in ["fear", "surprise"]: css_class = "emotion-fear"
                     elif emotion == "neutral": css_class = "emotion-neutral"
                     
-                    # Markdown for the custom card structure
-                    st.markdown(f"""
-                        <div class="result-card {css_class}">
-                            <div class="result-text">"{input_text}"</div>
-                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                                <div>
-                                    <span class="result-emotion">{result['Dominant Emotion']}</span>
-                                </div>
-                                <div class="result-confidence">
-                                    CONFIDENCE: {confidence}
+                    # Display card in the column
+                    with cols[i % 2]: # Alternates between column 0 and 1
+                        st.markdown(f"""
+                            <div class="result-card {css_class}">
+                                <div class="result-text">"{input_text}"</div>
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div>
+                                        <span class="result-emotion">{result['Dominant Emotion']}</span>
+                                    </div>
+                                    <div class="result-confidence">
+                                        SCORE: {confidence}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    """, unsafe_allow_html=True)
-                # --- END NEW OUTPUT PATTERN ---
-                
+                        """, unsafe_allow_html=True)
     else:
-        st.warning("Input required. Please provide text before initiating analysis.")
+        # Removed emoji from warning message
+        st.warning("SYSTEM ALERT: Input required. Please provide text before initiating analysis.")
 
 # 3. FOOTER
 st.markdown("---")
-st.markdown('<p class="st-emotion-detector-caption"> BUILD BY CSE-A</p>', unsafe_allow_html=True)
+# Cleaned up footer text
+st.markdown('<p class="st-emotion-detector-caption">ENGINEERING BY CSE-A | DEPLOYED SYSTEM v1.2</p>', unsafe_allow_html=True)
