@@ -27,6 +27,14 @@ st.markdown("""
         --mono-font: 'Consolas', 'Courier New', monospace; /* Futuristic Monospace Font */
     }
     
+    /* --- EMOTION SPECIFIC COLOR MAP --- */
+    /* Define colors for the result blocks */
+    .emotion-anger, .emotion-disgust { --emotion-color: #ff3366; } /* Red/Pink */
+    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #fffb00; } /* Neon Yellow */
+    .emotion-sadness, .emotion-loneliness { --emotion-color: #00aaff; } /* Blue */
+    .emotion-fear, .emotion-surprise { --emotion-color: #ff00ff; } /* Magenta/Purple */
+    .emotion-neutral { --emotion-color: var(--primary-color); } /* Primary Cyan */
+    
     /* 2. OVERALL LAYOUT & BACKGROUND */
     .main {
         background: var(--background-dark);
@@ -47,7 +55,6 @@ st.markdown("""
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     }
 
-
     /* 3. TITLES & TEXT EFFECTS */
     h1 {
         color: var(--primary-color);
@@ -65,15 +72,6 @@ st.markdown("""
         border-left: 5px solid var(--primary-color); 
         margin-top: 2rem;
         margin-bottom: 1rem;
-    }
-    
-    /* Info Box styling (for the initial info message) */
-    .stAlert {
-        background-color: var(--surface-color) !important;
-        border: 1px solid var(--primary-dark) !important;
-        color: var(--text-color-light) !important;
-        border-radius: 8px;
-        box-shadow: 0 0 5px var(--primary-dark);
     }
 
     /* 4. TEXT AREA EFFECTS */
@@ -121,40 +119,52 @@ st.markdown("""
         box-shadow: 0 0 25px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
-    /* 6. DATAFRAME EFFECTS & EMOTION COLORS */
-    .stDataFrame {
-        border-radius: 10px !important; 
-        box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.7); 
-        border: 1px solid var(--primary-dark); 
-        overflow: hidden;
-        background-color: var(--surface-color); 
+    /* 6. NEW: CUSTOM RESULT CARDS (DATA BLOCKS) */
+    .result-card {
+        background-color: var(--surface-color);
+        border: 2px solid var(--emotion-color, var(--primary-dark)); /* Use emotion color for border */
+        border-left: 10px solid var(--emotion-color, var(--primary-color)); /* Strong left border */
+        border-radius: 10px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 5px var(--emotion-color, rgba(0, 0, 0, 0)); /* subtle glow */
+        transition: all 0.3s ease;
     }
     
-    .stDataFrame .data-row, .stDataFrame th, .stDataFrame td {
-        color: var(--text-color-light) !important;
-        font-family: var(--mono-font) !important; 
+    .result-card:hover {
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.8), 0 0 8px var(--emotion-color); /* Stronger hover glow */
     }
 
-    /* --- EMOTION SPECIFIC COLORING (Cyberpunk/Neon Tones) --- */
-    [data-testid="stDataframe"] div:nth-child(3) > div:not(:first-child) { 
-        font-weight: 800 !important;
-        padding: 6px 10px !important;
-        border-radius: 6px;
-        text-align: center;
-        margin: 4px 0;
+    .result-text {
+        color: var(--text-color-light);
+        font-family: 'Inter', sans-serif;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        font-style: italic;
+    }
+
+    .result-emotion {
         display: inline-block;
-        min-width: 110px;
-        transition: all 0.3s ease; 
-        text-shadow: 0 0 2px black;
-        font-family: 'Inter', sans-serif !important;
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--background-dark);
+        background-color: var(--emotion-color);
+        padding: 5px 12px;
+        border-radius: 6px;
+        margin-right: 15px;
+        text-transform: uppercase;
+        box-shadow: 0 0 5px var(--emotion-color);
     }
-
-    /* Color definitions */
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("ANGER"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("DISGUST") { background-color: #ff3366; color: var(--background-dark); box-shadow: 0 0 8px #ff3366;}
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("JOY"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("HAPPINESS"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("EXCITEMENT") { background-color: #fffb00; color: var(--background-dark); box-shadow: 0 0 8px #fffb00;}
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("SADNESS"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("LONELINESS") { background-color: #00aaff; color: var(--background-dark); box-shadow: 0 0 8px #00aaff;}
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("FEAR"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("SURPRISE") { background-color: #ff00ff; color: var(--background-dark); box-shadow: 0 0 8px #ff00ff;}
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("NEUTRAL") { background-color: var(--primary-color); color: var(--background-dark); box-shadow: 0 0 8px var(--primary-color);}
+    
+    .result-confidence {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-color-secondary);
+        font-family: var(--mono-font);
+    }
+    
+    /* Remove old dataframe CSS since it's no longer used for the final output */
+    .stDataFrame { display: none; }
 
 
     /* 7. DIVIDER & FOOTER */
@@ -255,24 +265,46 @@ classifier = initialize_classifier()
 
 st.markdown("---")
 
-# 2. RESULTS BLOCK (Restored Data Log Table)
+# 2. RESULTS BLOCK (Custom Data Blocks/Cards)
 if analyze:
     if texts:
         results_container = st.container()
         with results_container:
             st.subheader("📊 DETAILED ANALYSIS LOG")
             
-            # Use a full-width column to hold the dataframe
-            col_data, = st.columns([1])
-            
             with st.spinner("Processing data... Stand by."):
                 results = detect_emotions(classifier, texts)
-                df = pd.DataFrame(results)
                 
-                with col_data:
-                    # The restored detailed, color-coded table
-                    st.dataframe(df, hide_index=True, use_container_width=True)
+                # --- NEW OUTPUT PATTERN: CUSTOM CARDS ---
+                for result in results:
+                    emotion = result['Dominant Emotion'].lower()
+                    confidence = result['Confidence']
+                    input_text = result['Input Text']
                     
+                    # Map common emotions to single CSS class for coloring
+                    css_class = ""
+                    if emotion in ["anger", "disgust"]: css_class = "emotion-anger"
+                    elif emotion in ["joy", "happiness", "excitement"]: css_class = "emotion-joy"
+                    elif emotion in ["sadness", "loneliness"]: css_class = "emotion-sadness"
+                    elif emotion in ["fear", "surprise"]: css_class = "emotion-fear"
+                    elif emotion == "neutral": css_class = "emotion-neutral"
+                    
+                    # Markdown for the custom card structure
+                    st.markdown(f"""
+                        <div class="result-card {css_class}">
+                            <div class="result-text">"{input_text}"</div>
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <span class="result-emotion">{result['Dominant Emotion']}</span>
+                                </div>
+                                <div class="result-confidence">
+                                    CONFIDENCE: {confidence}
+                                </div>
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                # --- END NEW OUTPUT PATTERN ---
+                
     else:
         st.warning("Input required. Please provide text before initiating analysis.")
 
