@@ -16,7 +16,72 @@ EMOTION_ICONS = {
     "NEUTRAL": "😐"
 }
 
-# --- Core Functions (kept mostly the same for functionality) ---
+# --- CUSTOM CSS STYLING ---
+def inject_custom_css():
+    """Injects custom CSS to enhance the Streamlit UI."""
+    st.markdown(
+        """
+        <style>
+        /* 1. Base Font and Background */
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+        
+        /* 2. Main Title Styling */
+        .stApp > header {
+            background-color: transparent; /* Remove header background */
+        }
+        h1 {
+            color: #1E90FF; /* Dodger Blue for the title */
+            border-bottom: 2px solid #EEEEEE;
+            padding-bottom: 10px;
+        }
+        
+        /* 3. Streamlit Metrics (for Emotion Summary) */
+        div[data-testid="stMetric"] {
+            background-color: #F8F9FA;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #E9ECEF;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease-in-out;
+        }
+        div[data-testid="stMetric"]:hover {
+            border-color: #1E90FF; /* Highlight on hover */
+        }
+        
+        /* 4. Text Area Styling */
+        textarea {
+            border-radius: 8px;
+            border: 1px solid #CED4DA;
+        }
+        
+        /* 5. Primary Button Styling */
+        .stButton button {
+            background-color: #1E90FF;
+            color: white;
+            border-radius: 8px;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .stButton button:hover {
+            background-color: #0077CC;
+        }
+
+        /* 6. Tabs Styling */
+        div[role="tablist"] button {
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# --- Core Functions (kept the same) ---
 
 @st.cache_resource
 def initialize_classifier():
@@ -46,18 +111,16 @@ def detect_emotions(classifier, texts):
     for text, prediction_list in zip(texts, predictions):
         best_prediction = max(prediction_list, key=lambda x: x['score'])
         
-        # Prepare the output row, including the icon for UI
         dominant_emotion = best_prediction['label'].upper()
         icon = EMOTION_ICONS.get(dominant_emotion, "❓")
         
         row = {
             'Input Text': text,
-            'Dominant Emotion': f"{icon} {dominant_emotion}", # Enhanced UI column
-            'Confidence Score': f"{best_prediction['score']:.4f}",
-            'Raw Emotion Label': dominant_emotion # Keep raw label for filtering/internal logic
+            'Dominant Emotion': f"{icon} {dominant_emotion}",
+            'Confidence Score': float(f"{best_prediction['score']:.4f}"), # Convert to float for ProgressColumn
+            'Raw Emotion Label': dominant_emotion 
         }
 
-        # Add all scores for the advanced view
         for item in prediction_list:
             row[f"Score - {item['label'].upper()}"] = f"{item['score']:.4f}"
 
@@ -65,16 +128,17 @@ def detect_emotions(classifier, texts):
 
     return results
 
-# --- Streamlit Application Layout (UI CHANGES) ---
+# --- Streamlit Application Layout (Incorporating CSS) ---
+
+# Inject CSS at the very start
+inject_custom_css()
 
 # 1. Page Configuration and Title
 st.set_page_config(
-    page_title="Text Emotion Detector",
+    page_title="AI Emotion Detector",
     layout="wide",
     initial_sidebar_state="auto",
-    menu_items={
-        'About': "Emotion Analyzer App using Hugging Face Transformers and Streamlit."
-    }
+    menu_items={'About': "Emotion Analyzer App using Hugging Face Transformers and Streamlit."}
 )
 
 st.title("🗣️ AI Emotion Analyzer")
@@ -86,7 +150,7 @@ Analyze the emotional tone of your text using the **`{MODEL_NAME}`** model.
 classifier = initialize_classifier()
 st.markdown("---")
 
-# 3. Input Area (Organized using an expander)
+# 3. Input Area
 with st.expander("📝 **Enter Text(s) for Analysis**", expanded=True):
     default_text = (
         "I am so incredibly happy and proud of what we achieved today!\n"
@@ -94,7 +158,6 @@ with st.expander("📝 **Enter Text(s) for Analysis**", expanded=True):
         "My heart is racing, I'm genuinely terrified of what might happen next."
     )
 
-    # Use st.columns for better button placement
     col1, col2 = st.columns([4, 1])
 
     with col1:
@@ -103,15 +166,13 @@ with st.expander("📝 **Enter Text(s) for Analysis**", expanded=True):
             value=default_text,
             height=150,
             key="text_input",
-            label_visibility="collapsed" # Hide label for cleaner look
+            label_visibility="collapsed"
         )
     
-    # Prepare texts list, filtering out empty lines
     input_texts = [text.strip() for text in input_text.split('\n') if text.strip()]
 
     with col2:
-        # Align the button nicely with the text area
-        st.markdown("<br>", unsafe_allow_html=True) # Small vertical space
+        st.markdown("<br>", unsafe_allow_html=True) 
         analyze_button = st.button(
             "Analyze Texts", 
             type="primary", 
@@ -131,13 +192,11 @@ if analyze_button:
             if detection_results:
                 df = pd.DataFrame(detection_results)
                 
-                # --- UI Enhancement: Emotion Count Metrics (More Visually appealing) ---
+                # --- Emotion Count Metrics (Styled by CSS) ---
                 st.markdown("#### Dominant Emotions Summary")
                 
-                # Get the counts from the raw label column for better grouping/sorting
                 emotion_counts = df['Raw Emotion Label'].value_counts()
                 
-                # Use a container to hold the metrics
                 metric_container = st.container()
                 cols = metric_container.columns(min(len(emotion_counts), 7)) 
 
@@ -151,14 +210,12 @@ if analyze_button:
 
                 st.markdown("---")
                 
-                # --- UI Enhancement: Tabular Results with two views ---
+                # --- Tabular Results with Progress Bar ---
                 st.markdown("#### Detailed Analysis Table")
                 
-                # Use tabs to organize the two result views
                 tab_simple, tab_advanced = st.tabs(["Simple Results", "All Confidence Scores"])
 
                 with tab_simple:
-                    # Drop the raw label column before displaying the final table
                     simple_df = df.drop(columns=['Raw Emotion Label']) 
                     simple_df = simple_df[['Input Text', 'Dominant Emotion', 'Confidence Score']]
                     
@@ -169,26 +226,22 @@ if analyze_button:
                         column_config={
                             "Dominant Emotion": st.column_config.Column(
                                 "Dominant Emotion",
-                                help="The emotion with the highest confidence score (includes emoji for quick identification).",
-                                width="small" # Make this column smaller
+                                width="small"
                             ),
                             "Confidence Score": st.column_config.ProgressColumn(
                                 "Confidence Score",
-                                help="Model's certainty (0.00 to 1.00)",
                                 format="%.2f",
                                 min_value=0.0,
                                 max_value=1.0,
                             ),
                             "Input Text": st.column_config.TextColumn(
                                 "Input Text",
-                                help="The text that was analyzed.",
                                 width="large"
                             )
                         }
                     )
                 
                 with tab_advanced:
-                    # Drop the UI-specific columns and keep all score columns
                     advanced_df = df.drop(columns=['Dominant Emotion', 'Confidence Score', 'Raw Emotion Label'])
                     st.dataframe(
                         advanced_df,
