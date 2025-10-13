@@ -1,12 +1,11 @@
 import streamlit as st
-import pandas as pd
 from transformers import pipeline
 
 # --- CONFIGURATION ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
 # --- EMOTION GIF MAPPING ---
-# Mappings using the URLs provided by the user.
+# These are the GIFs you provided, mapped to the model's output emotions.
 EMOTION_GIFS = {
     # User-provided URLs
     "ANGER": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29sb29oMWNzYjk4ZnRlMTlkenBmNTd1dmZjemVjaGI0Z21oYXRvZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jsNiI5nMGQurggwpkN/giphy.webp",
@@ -16,7 +15,7 @@ EMOTION_GIFS = {
     "FEAR": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eTZ6YmNrZHV3OHd1OHhmcmlqOXVzMHJua2JjNXpwYWkxeTJ3bWp6bCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Gl7mfimOjkkGl5mMDS/giphy.webp",
     "NEUTRAL": "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzRuY2I5dGM0ZnE4aG04NzZiMnY5aW4wdHZ1MXdpN3djeG1hd2t0byZlcD12MV9naWZzX3NlYXJjaCZjdD1n/7CXIO53h5YciXOp505/giphy.webp",
     
-    # Mapped/Grouped Emotions
+    # Mapped/Grouped Emotions (Using your provided GIFs for similar feelings)
     "DISGUST": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29sb29oMWNzYjk4ZnRlMTlkenBmNTd1dmZjemVjaGI0Z21oYXRvZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jsNiI5nMGQurggwpkN/giphy.webp", # Maps to ANGER
     "EXCITEMENT": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MmZnc3Q0c2FoMXR6aDZtc2xxZG45dHhtbHY1Mms3bTFxbnk2eWJoeSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LN5bH1r7UEpSRbcN7M/giphy.webp", # Maps to JOY
     "LONELINESS": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXlmdzVmNXdhemlwY2F4N2ZoZnJzaDM3bnBsOTk3ejkwZmtzZ2JtMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/StAnQV9TUCuys/giphy.webp", # Maps to SADNESS
@@ -31,7 +30,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (The CSS styles were kept the same for the visual theme to work) ---
+# --- CUSTOM CSS (This sets the dark/neon theme) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
@@ -68,7 +67,7 @@ st.markdown("""
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     }
 
-    /* 3. TITLES & TEXT EFFECTS (Retained) */
+    /* 3. TITLES & TEXT EFFECTS */
     h1 {
         color: var(--primary-color);
         font-weight: 900;
@@ -85,7 +84,7 @@ st.markdown("""
         margin-bottom: 1rem;
     }
 
-    /* 4. TEXT AREA EFFECTS (Retained) */
+    /* 4. TEXT AREA EFFECTS */
     textarea {
         border-radius: 10px !important;
         border: 2px solid var(--primary-dark) !important;
@@ -98,7 +97,7 @@ st.markdown("""
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
     }
 
-    /* 5. BUTTON EFFECTS (Retained) */
+    /* 5. BUTTON EFFECTS */
     div.stButton > button:first-child {
         background: var(--primary-dark);
         color: var(--background-dark);
@@ -115,7 +114,7 @@ st.markdown("""
         box-shadow: 0 0 25px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
-    /* 6. CUSTOM RESULT CARDS (Updated for GIF) */
+    /* 6. CUSTOM RESULT CARDS */
     .result-card {
         background-color: var(--surface-color);
         border: 2px solid var(--emotion-color, var(--primary-dark)); 
@@ -170,7 +169,7 @@ st.markdown("""
         font-family: var(--mono-font);
     }
 
-    /* 7. DIVIDER & FOOTER (Retained) */
+    /* 7. DIVIDER & FOOTER */
     hr {
         border: 0;
         height: 2px;
@@ -185,16 +184,13 @@ st.markdown("""
 # --- MODEL LOADING ---
 @st.cache_resource
 def initialize_classifier():
-    """Load and cache the transformer model."""
+    """Load and cache the transformer model silently."""
     try:
-        # Simplified status message
-        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);">SYSTEM STATUS: Starting the brain... Wait a bit.</div>', unsafe_allow_html=True)
         classifier = pipeline(
             "text-classification",
             model=MODEL_NAME,
             return_all_scores=True
         )
-        st.success("✅ SYSTEM STATUS: Brain is ready!")
         return classifier
     except Exception as e:
         st.error(f"Error loading model: {e}")
@@ -216,19 +212,18 @@ def detect_emotions(classifier, texts):
     return results
 
 # =================================================================
-# --- FUTURISTIC UI LAYOUT (SIMPLIFIED HEADERS) ---
+# --- APP LAYOUT ---
 # =================================================================
 
-# SIMPLIFIED MAIN TITLE
+# MAIN TITLE
 st.title("⚡ TEXT EMOTION DETECTOR ⚡")
 st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">TELLS YOU THE FEELING IN YOUR WORDS 🤖</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
-# 1. INPUT BLOCK (Terminal style)
+# 1. INPUT BLOCK
 input_container = st.container()
 with input_container:
-    # SIMPLIFIED SUBHEADER
     st.subheader("⌨️ PUT YOUR TEXT HERE")
     
     col1, col_input, col2 = st.columns([1, 4, 1])
@@ -248,39 +243,36 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
         
         col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
         with col_btn:
-             # SIMPLIFIED BUTTON TEXT
              analyze = st.button("🔴 START THE CHECK 🚀", use_container_width=True)
 
-# Initialize classifier
+# Load the model silently
 classifier = initialize_classifier()
 
 st.markdown("---")
 
-# 2. RESULTS BLOCK (Custom Data Blocks/Cards with GIFs)
+# 2. RESULTS BLOCK
 if analyze:
     if texts:
         results_container = st.container()
         with results_container:
-            # SIMPLIFIED SUBHEADER
             st.subheader("📈 THE RESULTS: FEELINGS FOUND")
             
-            # Added two columns for better layout density
+            # Use two columns to display results cards
             cols = st.columns(2)
             
-            # Simplified spinner text
             with st.spinner("Thinking... Please wait."):
                 results = detect_emotions(classifier, texts)
                 
-                # --- NEW OUTPUT PATTERN: CUSTOM CARDS WITH GIFS ---
+                # Display results in alternating columns
                 for i, result in enumerate(results):
                     emotion = result['Dominant Emotion']
                     confidence = result['Confidence']
                     input_text = result['Input Text']
                     
                     # 1. Get the GIF URL
-                    gif_url = EMOTION_GIFS.get(emotion, EMOTION_GIFS["NEUTRAL"]) # Fallback to Neutral GIF
+                    gif_url = EMOTION_GIFS.get(emotion, EMOTION_GIFS["NEUTRAL"]) 
                     
-                    # 2. Determine CSS class for coloring (lowercase emotion)
+                    # 2. Determine CSS class for coloring
                     css_class = ""
                     if emotion in ["ANGER", "DISGUST"]: css_class = "emotion-anger"
                     elif emotion in ["JOY", "HAPPINESS", "EXCITEMENT"]: css_class = "emotion-joy"
@@ -288,8 +280,8 @@ if analyze:
                     elif emotion in ["FEAR", "SURPRISE"]: css_class = "emotion-fear"
                     elif emotion == "NEUTRAL": css_class = "emotion-neutral"
                     
-                    # Display card in the column
-                    with cols[i % 2]: # Alternates between column 0 and 1
+                    # Display card in the current column (i % 2 gives 0 or 1)
+                    with cols[i % 2]: 
                         st.markdown(f"""
                             <div class="result-card {css_class}">
                                 <div class="card-header-line">
@@ -304,10 +296,8 @@ if analyze:
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
-                # --- END NEW OUTPUT PATTERN ---
                 
     else:
-        # Simplified warning message
         st.warning("HEY! You need to write some text first before starting the check.")
 
 # 3. FOOTER
