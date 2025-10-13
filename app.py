@@ -3,18 +3,11 @@ from transformers import pipeline
 
 # --- CONFIGURATION ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
-
-# --- ASSET URLS ---
-# Using a static image for the page icon (browser tab icon)
 PAGE_ICON_URL = "https://cdn-icons-png.flaticon.com/128/10479/10479785.png"
-# New video for the input header section
-INPUT_VIDEO_URL = "https://cdn-icons-mp4.flaticon.com/512/12544/12544440.mp4"
-# The image previously used for the input header (kept for fallback/reference)
-# HEADER_IMAGE_URL = "https://img.freepik.com/free-vector/graident-ai-robot-vectorart_78370-4114.jpg?semt=ais_hybrid&w=740&q=80"
-
 
 # --- EMOTION GIF MAPPING (UNMODIFIED) ---
 EMOTION_GIFS = {
+    # User-provided URLs
     "ANGER": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29sb29oMWNzYjk4ZnRlMTlkenBmNTd1dmZjemVjaGI0Z21oYXRvZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jsNiI5nMGQurggwpkN/giphy.webp",
     "HAPPINESS": "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNDV5djV3enNnd3kzcXAxdzFydjYxOWN4aWRwOTMzbW50aHN1azQzcyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/USR9bpLz899PYVHk7C/giphy.webp",
     "SADNESS": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXlmdzVmNXdhemlwY2F4N2ZoZnJzaDM3bnBsOTk3ejkwZmtzZ2JtMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/StAnQV9TUCuys/giphy.webp",
@@ -31,11 +24,11 @@ EMOTION_GIFS = {
 # --- PAGE SETUP ---
 st.set_page_config(
     page_title="🧠 Emotion Detector From Text",
-    page_icon=PAGE_ICON_URL, # Uses the static PNG icon
+    page_icon=PAGE_ICON_URL,
     layout="wide",
 )
 
-# --- CUSTOM CSS ---
+# --- CUSTOM CSS (Simplified h3 style) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
@@ -88,7 +81,6 @@ st.markdown("""
     }
     
     /* --- GLOWING EFFECT & NEW FONT ON SUBHEADER (h3) --- */
-    /* Note: H3 is now used only for 'FEELINGS FOUND', as the input header uses a markdown/video combination */
     h3 {
         color: var(--text-color-light);
         font-family: var(--header-font); 
@@ -104,25 +96,7 @@ st.markdown("""
             0 0 8px var(--primary-color), 
             0 0 12px var(--primary-dark);
         
-        /* Ensure text and image align nicely if image is used in header */
-        display: flex; 
-        align-items: center; 
-        gap: 10px; 
-    }
-    
-    /* Custom Styling for the INPUT HEADER text */
-    .input-header-text {
-        font-family: var(--header-font);
-        font-weight: 700;
-        color: var(--text-color-light);
-        font-size: 1.5rem; /* Match st.subheader size */
-        margin-bottom: 0;
-        padding-left: 5px;
-        border-left: 5px solid var(--primary-color);
-        text-shadow: 
-            0 0 4px var(--primary-color), 
-            0 0 8px var(--primary-color), 
-            0 0 12px var(--primary-dark);
+        display: block; /* Removed flex alignment specific to the image */
     }
 
     /* 5. TEXT AREA EFFECTS */
@@ -137,7 +111,7 @@ st.markdown("""
         line-height: 1.6; 
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
     }
-    
+
     /* 6. BUTTON EFFECTS */
     div.stButton > button:first-child {
         background: var(--primary-dark);
@@ -266,17 +240,9 @@ st.markdown("---")
 input_container = st.container()
 with input_container:
     
-    # --- VIDEO & HEADER LAYOUT ---
-    col_vid, col_header = st.columns([1, 4])
-
-    with col_vid:
-        # Display the MP4 video using st.video
-        st.video(INPUT_VIDEO_URL, autoplay=True, loop=True, muted=True)
-
-    with col_header:
-        # Custom HTML for the text header with glowing style
-        st.markdown(f'<p class="input-header-text">PUT YOUR TEXT HERE</p>', unsafe_allow_html=True)
-
+    # Restored to simple st.subheader using the custom h3 style (Montserrat font, glow, border)
+    st.subheader("PUT YOUR TEXT HERE")
+    
     # --- TEXT AREA ---
     col1, col_input, col2 = st.columns([1, 4, 1])
 
@@ -308,7 +274,6 @@ if analyze:
     if texts:
         results_container = st.container()
         with results_container:
-            # This is the only place st.subheader is used now
             st.subheader("📈 THE RESULTS: FEELINGS FOUND")
             
             # Use two columns to display results cards
