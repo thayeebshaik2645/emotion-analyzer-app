@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
 from transformers import pipeline
+import plotly.express as px
 
 # --- CONFIGURATION ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
 # --- PAGE SETUP ---
 st.set_page_config(
-    page_title="Emotion Detector",
+    page_title="🧠 Emotion Detector",
     page_icon="🧠",
     layout="wide",
 )
@@ -17,55 +18,62 @@ st.markdown("""
     <style>
     /* --- Overall layout --- */
     .main {
-        background: #f8fafc;
+        background: #f0f4f8;
         padding: 2rem 3rem;
         font-family: 'Inter', sans-serif;
     }
 
-    /* --- Title --- */
+    /* --- Titles --- */
     h1 {
         color: #1e293b;
-        font-weight: 800;
+        font-weight: 900;
         text-align: center;
         margin-bottom: 0.5rem;
     }
 
-    /* --- Subheaders --- */
     h2, h3 {
         color: #334155;
-        font-weight: 600;
+        font-weight: 700;
     }
 
     /* --- Text area --- */
     textarea {
-        border-radius: 10px !important;
+        border-radius: 15px !important;
         border: 1px solid #cbd5e1 !important;
-        padding: 10px !important;
+        padding: 12px !important;
         background-color: #ffffff !important;
-        color: #0f172a !important;   /* <-- Make text dark for visibility */
+        color: #0f172a !important;
         font-size: 16px !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: all 0.2s ease-in-out;
+    }
+
+    textarea:focus {
+        border: 2px solid #2563eb !important;
+        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
     }
 
     /* --- Buttons --- */
     div.stButton > button:first-child {
-        background-color: #2563eb;
+        background: linear-gradient(90deg, #2563eb, #1d4ed8);
         color: white;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 0.6em 1.2em;
-        transition: all 0.2s ease-in-out;
+        font-weight: 700;
+        border-radius: 12px;
+        padding: 0.6em 1.5em;
+        transition: all 0.3s ease-in-out;
         border: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 
     div.stButton > button:first-child:hover {
-        background-color: #1d4ed8;
-        transform: scale(1.02);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
 
-    /* --- DataFrame styling --- */
+    /* --- DataFrame & Cards --- */
     .stDataFrame {
-        border-radius: 10px !important;
-        box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
+        border-radius: 12px !important;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
     }
 
     /* --- Footer --- */
@@ -73,13 +81,20 @@ st.markdown("""
         visibility: hidden;
     }
 
+    /* --- Divider --- */
+    hr {
+        border: 0;
+        height: 1px;
+        background: #cbd5e1;
+        margin: 2rem 0;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # --- MODEL LOADING ---
 @st.cache_resource
 def initialize_classifier():
-    """Initialize emotion classifier and cache."""
+    """Load and cache the transformer model."""
     try:
         with st.spinner(f"Loading model `{MODEL_NAME}`..."):
             classifier = pipeline(
@@ -104,7 +119,7 @@ def detect_emotions(classifier, texts):
         results.append({
             "Input Text": text,
             "Dominant Emotion": best['label'].upper(),
-            "Confidence": f"{best['score']:.4f}"
+            "Confidence": best['score']
         })
     return results
 
@@ -112,10 +127,10 @@ def detect_emotions(classifier, texts):
 st.title("🧠 Emotion Detector Dashboard")
 st.markdown("""
 Detect emotions in text using a fine-tuned Transformer model.
-Simply paste your sentences below and click **Analyze**!
+Paste your sentences below and click **Analyze** to see the results!
 """)
 
-st.divider()
+st.markdown("---")
 
 # --- INPUT ---
 st.subheader("📝 Step 1: Enter Text(s) to Analyze")
@@ -127,7 +142,7 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
 input_text = st.text_area(
     "Enter one sentence per line:",
     value=default_text,
-    height=180
+    height=200
 )
 texts = [t.strip() for t in input_text.split("\n") if t.strip()]
 
@@ -143,10 +158,31 @@ if analyze:
         with st.spinner("Analyzing emotions..."):
             results = detect_emotions(classifier, texts)
             df = pd.DataFrame(results)
+            
+            # Show table
             st.dataframe(df, hide_index=True, use_container_width=True)
+
+            # --- Plot bar chart ---
+            for res in results:
+                fig = px.bar(
+                    x=[res["Dominant Emotion"]],
+                    y=[res["Confidence"]],
+                    text=[f"{res['Confidence']*100:.1f}%"],
+                    labels={"x":"Emotion", "y":"Confidence"},
+                    color=[res["Dominant Emotion"]],
+                    color_discrete_sequence=px.colors.qualitative.Set2
+                )
+                fig.update_layout(
+                    title=f"Confidence for: {res['Input Text']}",
+                    yaxis=dict(range=[0,1]),
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    height=250
+                )
+                st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning("Please enter some text before clicking *Analyze*.")
 
-st.divider()
-st.caption("Built with ❤️ using Streamlit and Hugging Face Transformers.")
+st.markdown("---")
+st.caption("build by CSE A ")
 
