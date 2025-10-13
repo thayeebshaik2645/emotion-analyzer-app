@@ -253,7 +253,7 @@ with input_container:
     # UPDATED: Image instead of emoji, and custom styling for alignment
     st.markdown(f"""
         <h3>
-            <img src="https://img.freepik.com/free-vector/graident-ai-robot-vectorart_78370-4114.jpg?semt=ais_hybrid&w=740&q=80" class="header-icon" alt="Robot Icon">
+            <img src="https://cdn-icons-gif.flaticon.com/12544/12544440.gif">
             PUT YOUR TEXT HERE
         </h3>
     """, unsafe_allow_html=True)
@@ -336,3 +336,4 @@ if analyze:
 # 3. FOOTER
 st.markdown("---")
 st.markdown('<p class="st-emotion-detector-caption"> BUILT BY CSE-A</p>', unsafe_allow_html=True)
+
