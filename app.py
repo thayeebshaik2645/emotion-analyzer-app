@@ -4,33 +4,38 @@ from transformers import pipeline
 # --- CONFIGURATION ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
-# --- EMOTION GIF MAPPING ---
+# --- ASSET URLS ---
+# Using a static image for the page icon (browser tab icon)
+PAGE_ICON_URL = "https://cdn-icons-png.flaticon.com/128/10479/10479785.png"
+# New video for the input header section
+INPUT_VIDEO_URL = "https://cdn-icons-mp4.flaticon.com/512/12544/12544440.mp4"
+# The image previously used for the input header (kept for fallback/reference)
+# HEADER_IMAGE_URL = "https://img.freepik.com/free-vector/graident-ai-robot-vectorart_78370-4114.jpg?semt=ais_hybrid&w=740&q=80"
+
+
+# --- EMOTION GIF MAPPING (UNMODIFIED) ---
 EMOTION_GIFS = {
-    # User-provided URLs
     "ANGER": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29sb29oMWNzYjk4ZnRlMTlkenBmNTd1dmZjemVjaGI0Z21oYXRvZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jsNiI5nMGQurggwpkN/giphy.webp",
-    "HAPPINESS": "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNDV5djV3enNnd3kzcXAxdzFydjYxOWN4aWRwOTMzbW50aHN1azQzcyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/USR9bpLz893PYVHk7C/giphy.webp",
+    "HAPPINESS": "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNDV5djV3enNnd3kzcXAxdzFydjYxOWN4aWRwOTMzbW50aHN1azQzcyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/USR9bpLz899PYVHk7C/giphy.webp",
     "SADNESS": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXlmdzVmNXdhemlwY2F4N2ZoZnJzaDM3bnBsOTk3ejkwZmtzZ2JtMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/StAnQV9TUCuys/giphy.webp",
     "JOY": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MmZnc3Q0c2FoMXR6aDZtc2xxZG45dHhtbHY1Mms3bTFxbnk2eWJoeSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LN5bH1r7UEpSRbcN7M/giphy.webp",
     "FEAR": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eTZ6YmNrZHV3OHd1OHhmcmlqOXVzMHJua2JjNXpwYWkxeTJ3bWp6bCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Gl7mfimOjkkGl5mMDS/giphy.webp",
     "NEUTRAL": "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzRuY2I5dGM0ZnE4aG04NzZiMnY5aW4wdHZ1MXdpN3djeG1hd2t0byZlcD12MV9naWZzX3NlYXJjaCZjdD1n/7CXIO53h5YciXOp505/giphy.webp",
-    
-    # Mapped/Grouped Emotions (Using your provided GIFs for similar feelings)
-    "DISGUST": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29sb29oMWNzYjk4ZnRlMTlkenBmNTd1dmZjemVjaGI0Z21oYXRvZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jsNiI5nMGQurggwpkN/giphy.webp", # Maps to ANGER
-    "EXCITEMENT": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MmZnc3Q0c2FoMXR6aDZtc2xxZG45dHhtbHY1Mms3bTFxbnk2eWJoeSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LN5bH1r7UEpSRbcN7M/giphy.webp", # Maps to JOY
-    "LONELINESS": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXlmdzVmNXdhemlwY2F4N2ZoZnJzaDM3bnBsOTk3ejkwZmtzZ2JtMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/StAnQV9TUCuys/giphy.webp", # Maps to SADNESS
-    "SURPRISE": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eTZ6YmNrZHV3OHd1OHhmcmlqOXVzMHJua2JjNXpwYWkxeTJ3bWp6bCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Gl7mfimOjkkGl5mMDS/giphy.webp", # Maps to FEAR
+    "DISGUST": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29sb29oMWNzYjk4ZnRlMTlkenBmNTd1dmZjemVjaGI0Z21oYXRvZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jsNiI5nMGQurggwpkN/giphy.webp",
+    "EXCITEMENT": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MmZnc3Q0c2FoMXR6aDZtc2xxZG45dHhtbHY1Mms3bTFxbnk2eWJoeSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LN5bH1r7UEpSRbcN7M/giphy.webp",
+    "LONELINESS": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXlmdzVmNXdhemlwY2F4N2ZoZnJzaDM3bnBsOTk3ejkwZmtzZ2JtMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/StAnQV9TUCuys/giphy.webp",
+    "SURPRISE": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eTZ6YmNrZHV3OHd1OHhmcmlqOXVzMHJua2JjNXpwYWkxeTJ3bWp6bCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Gl7mfimOjkkGl5mMDS/giphy.webp",
 }
 
 
 # --- PAGE SETUP ---
 st.set_page_config(
     page_title="🧠 Emotion Detector From Text",
-    # UPDATED: Changed page_icon to the new URL
-    page_icon="https://cdn-icons-png.flaticon.com/128/10479/10479785.png",
+    page_icon=PAGE_ICON_URL, # Uses the static PNG icon
     layout="wide",
 )
 
-# --- CUSTOM CSS (Updated for new image and potential image styling) ---
+# --- CUSTOM CSS ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
@@ -83,6 +88,7 @@ st.markdown("""
     }
     
     /* --- GLOWING EFFECT & NEW FONT ON SUBHEADER (h3) --- */
+    /* Note: H3 is now used only for 'FEELINGS FOUND', as the input header uses a markdown/video combination */
     h3 {
         color: var(--text-color-light);
         font-family: var(--header-font); 
@@ -103,12 +109,20 @@ st.markdown("""
         align-items: center; 
         gap: 10px; 
     }
-
-    /* Style for the new image in the header */
-    .header-icon {
-        height: 35px; /* Adjust size as needed */
-        width: auto;
-        vertical-align: middle; 
+    
+    /* Custom Styling for the INPUT HEADER text */
+    .input-header-text {
+        font-family: var(--header-font);
+        font-weight: 700;
+        color: var(--text-color-light);
+        font-size: 1.5rem; /* Match st.subheader size */
+        margin-bottom: 0;
+        padding-left: 5px;
+        border-left: 5px solid var(--primary-color);
+        text-shadow: 
+            0 0 4px var(--primary-color), 
+            0 0 8px var(--primary-color), 
+            0 0 12px var(--primary-dark);
     }
 
     /* 5. TEXT AREA EFFECTS */
@@ -123,7 +137,7 @@ st.markdown("""
         line-height: 1.6; 
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
     }
-
+    
     /* 6. BUTTON EFFECTS */
     div.stButton > button:first-child {
         background: var(--primary-dark);
@@ -141,7 +155,7 @@ st.markdown("""
         box-shadow: 0 0 25px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
-    /* 7. CUSTOM RESULT CARDS */
+    /* 7. CUSTOM RESULT CARDS and other elements (unmodified) */
     .result-text {
         color: var(--text-color-light);
         font-family: var(--main-font); 
@@ -251,14 +265,19 @@ st.markdown("---")
 # 1. INPUT BLOCK
 input_container = st.container()
 with input_container:
-    # UPDATED: Image instead of emoji, and custom styling for alignment
-    st.markdown(f"""
-        <h3>
-            <img src="https://img.freepik.com/free-vector/graident-ai-robot-vectorart_78370-4114.jpg?semt=ais_hybrid&w=740&q=80" class="header-icon" alt="Robot Icon">
-            PUT YOUR TEXT HERE
-        </h3>
-    """, unsafe_allow_html=True)
     
+    # --- VIDEO & HEADER LAYOUT ---
+    col_vid, col_header = st.columns([1, 4])
+
+    with col_vid:
+        # Display the MP4 video using st.video
+        st.video(INPUT_VIDEO_URL, autoplay=True, loop=True, muted=True)
+
+    with col_header:
+        # Custom HTML for the text header with glowing style
+        st.markdown(f'<p class="input-header-text">PUT YOUR TEXT HERE</p>', unsafe_allow_html=True)
+
+    # --- TEXT AREA ---
     col1, col_input, col2 = st.columns([1, 4, 1])
 
     default_text = """I am so incredibly happy and proud of what we achieved today!
@@ -266,7 +285,7 @@ This is confusing; I need someone to clarify the instructions for step three.
 My heart is racing, I'm genuinely terrified of what might happen next."""
     
     with col_input:
-        # REMOVED LABEL, as it's now visually handled by the header
+        # Text area without a label
         input_text = st.text_area(
             "", 
             value=default_text,
@@ -289,6 +308,7 @@ if analyze:
     if texts:
         results_container = st.container()
         with results_container:
+            # This is the only place st.subheader is used now
             st.subheader("📈 THE RESULTS: FEELINGS FOUND")
             
             # Use two columns to display results cards
