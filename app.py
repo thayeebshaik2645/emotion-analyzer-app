@@ -5,7 +5,6 @@ from transformers import pipeline
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
 # --- EMOTION GIF MAPPING ---
-# These are the GIFs you provided, mapped to the model's output emotions.
 EMOTION_GIFS = {
     # User-provided URLs
     "ANGER": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29sb29oMWNzYjk4ZnRlMTlkenBmNTd1dmZjemVjaGI0Z21oYXRvZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jsNiI5nMGQurggwpkN/giphy.webp",
@@ -30,11 +29,14 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (This sets the dark/neon theme) ---
+# --- CUSTOM CSS (Updated Fonts) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
-    /* 1. COLOR PALETTE DEFINITION (DARK/NEON) */
+    /* 1. FONT IMPORTS */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Fira+Code:wght@400;600&display=swap');
+    
+    /* 2. COLOR PALETTE DEFINITION (DARK/NEON) */
     :root {
         --primary-color: #00ffc8; /* Neon Cyan/Green Accent */
         --primary-dark: #00b38c;  /* Darker Neon */
@@ -42,7 +44,10 @@ st.markdown("""
         --surface-color: #1e1e1e; /* Card/Container Background */
         --text-color-light: #f0f0f0; /* Light Text */
         --text-color-secondary: #aaaaaa; /* Gray Text */
-        --mono-font: 'Consolas', 'Courier New', monospace; /* Futuristic Monospace Font */
+        
+        /* UPDATED FONTS */
+        --main-font: 'Poppins', sans-serif; 
+        --mono-font: 'Fira Code', monospace; 
     }
     
     /* --- EMOTION SPECIFIC COLOR MAP --- */
@@ -52,11 +57,11 @@ st.markdown("""
     .emotion-fear, .emotion-surprise { --emotion-color: #ff00ff; } /* Magenta/Purple */
     .emotion-neutral { --emotion-color: var(--primary-color); } /* Primary Cyan */
     
-    /* 2. OVERALL LAYOUT & BACKGROUND */
+    /* 3. OVERALL LAYOUT & BACKGROUND - NOW USING Poppins */
     .main {
         background: var(--background-dark);
         padding: 2.5rem 4rem; 
-        font-family: 'Inter', sans-serif;
+        font-family: var(--main-font); /* Applied new main font */
         color: var(--text-color-light); 
     }
     .stApp .st-emotion-cache-1pxn4ip, .stApp .st-emotion-cache-1v0pmnt {
@@ -67,24 +72,24 @@ st.markdown("""
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     }
 
-    /* 3. TITLES & TEXT EFFECTS */
+    /* 4. TITLES & TEXT EFFECTS - Poppins is bold and impactful */
     h1 {
         color: var(--primary-color);
-        font-weight: 900;
+        font-weight: 800; /* Poppins bold weight */
         text-align: center;
         text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-dark); 
         letter-spacing: 2px;
     }
     h2, h3 {
         color: var(--text-color-light);
-        font-weight: 700;
+        font-weight: 600; /* Poppins semi-bold */
         padding-left: 5px; 
         border-left: 5px solid var(--primary-color); 
         margin-top: 2rem;
         margin-bottom: 1rem;
     }
 
-    /* 4. TEXT AREA EFFECTS */
+    /* 5. TEXT AREA EFFECTS - Now using Fira Code */
     textarea {
         border-radius: 10px !important;
         border: 2px solid var(--primary-dark) !important;
@@ -92,12 +97,12 @@ st.markdown("""
         background-color: var(--surface-color) !important;
         color: var(--primary-color) !important;
         font-size: 17px !important; 
-        font-family: var(--mono-font) !important; 
+        font-family: var(--mono-font) !important; /* Applied new mono font */ 
         line-height: 1.6; 
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
     }
 
-    /* 5. BUTTON EFFECTS */
+    /* 6. BUTTON EFFECTS (Retained) */
     div.stButton > button:first-child {
         background: var(--primary-dark);
         color: var(--background-dark);
@@ -114,7 +119,7 @@ st.markdown("""
         box-shadow: 0 0 25px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
-    /* 6. CUSTOM RESULT CARDS */
+    /* 7. CUSTOM RESULT CARDS */
     .result-card {
         background-color: var(--surface-color);
         border: 2px solid var(--emotion-color, var(--primary-dark)); 
@@ -126,14 +131,14 @@ st.markdown("""
         transition: all 0.3s ease;
     }
     
-    .card-header-line { /* New class to align emotion tag and GIF */
+    .card-header-line {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
     }
     
-    .emotion-gif { /* Styling for the GIF */
+    .emotion-gif {
         width: 50px; 
         height: 50px;
         border-radius: 50%;
@@ -144,7 +149,7 @@ st.markdown("""
 
     .result-text {
         color: var(--text-color-light);
-        font-family: 'Inter', sans-serif;
+        font-family: var(--main-font); /* Applied new main font */
         font-size: 1.1rem;
         margin-bottom: 10px;
         font-style: italic;
@@ -166,10 +171,10 @@ st.markdown("""
         font-size: 1rem;
         font-weight: 600;
         color: var(--text-color-secondary);
-        font-family: var(--mono-font);
+        font-family: var(--mono-font); /* Applied new mono font */
     }
 
-    /* 7. DIVIDER & FOOTER */
+    /* 8. DIVIDER & FOOTER */
     hr {
         border: 0;
         height: 2px;
