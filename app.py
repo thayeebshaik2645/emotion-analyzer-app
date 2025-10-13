@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from transformers import pipeline
-import plotly.express as px
 
 # --- CONFIGURATION ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
@@ -70,7 +69,7 @@ st.markdown("""
         box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
 
-    /* --- DataFrame & Cards --- */
+    /* --- DataFrame --- */
     .stDataFrame {
         border-radius: 12px !important;
         box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
@@ -119,7 +118,7 @@ def detect_emotions(classifier, texts):
         results.append({
             "Input Text": text,
             "Dominant Emotion": best['label'].upper(),
-            "Confidence": best['score']
+            "Confidence": f"{best['score']:.4f}"
         })
     return results
 
@@ -161,28 +160,9 @@ if analyze:
             
             # Show table
             st.dataframe(df, hide_index=True, use_container_width=True)
-
-            # --- Plot bar chart ---
-            for res in results:
-                fig = px.bar(
-                    x=[res["Dominant Emotion"]],
-                    y=[res["Confidence"]],
-                    text=[f"{res['Confidence']*100:.1f}%"],
-                    labels={"x":"Emotion", "y":"Confidence"},
-                    color=[res["Dominant Emotion"]],
-                    color_discrete_sequence=px.colors.qualitative.Set2
-                )
-                fig.update_layout(
-                    title=f"Confidence for: {res['Input Text']}",
-                    yaxis=dict(range=[0,1]),
-                    plot_bgcolor='rgba(0,0,0,0)',
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    height=250
-                )
-                st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning("Please enter some text before clicking *Analyze*.")
 
 st.markdown("---")
-st.caption("build by CSE A ")
+st.caption("Built with ❤️ using Streamlit and Hugging Face Transformers.")
 
