@@ -5,6 +5,13 @@ from transformers import pipeline
 # --- Configuration ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
+# --- MINIONS COLOR PALETTE ---
+# Based on search results: Banana Yellow, Ocean Boat Blue, Spanish Gray
+MINION_YELLOW = "#FCE029"  # Minion Skin/Body
+MINION_BLUE = "#0A75BC"     # Overalls
+MINION_GRAY = "#949699"     # Goggles/Metals
+MINION_DARK = "#231F20"     # Raisin Black (Glove/Shadows)
+
 # Mapping for UI Enhancement: Icons and Emojis
 EMOTION_ICONS = {
     "JOY": "😄",
@@ -16,105 +23,109 @@ EMOTION_ICONS = {
     "NEUTRAL": "😐"
 }
 
-# --- AGGRESSIVE CUSTOM CSS STYLING (Dark Theme Focus) ---
+# --- MINIONS CUSTOM CSS STYLING ---
 def inject_custom_css():
-    """Injects custom CSS for a dark, professional theme."""
+    """Injects custom CSS for a bright, Minions-themed UI."""
     st.markdown(
-        """
+        f"""
         <style>
-        /* BASE DARK THEME OVERRIDES */
-        /* Set the main background to a dark color */
-        .stApp {
-            background-color: #121212; /* Very dark gray */
-            color: #E0E0E0; /* Light text color */
-        }
+        /* BASE THEME OVERRIDES (Light background, Minions colors) */
+        .stApp {{
+            background-color: #FFFFFF;
+            color: {MINION_DARK};
+        }}
         
-        /* Ensure main content background matches */
-        section.main {
-            background-color: #121212;
-        }
-
         /* 1. Typography and Headings */
-        h1, h2, h3, h4 {
-            color: #BB86FC; /* Primary accent color (Purple) */
-        }
+        h1, h2, h3, h4 {{
+            color: {MINION_BLUE}; /* Blue for headings */
+        }}
         
         /* 2. Main Title Styling */
-        h1 {
-            border-bottom: 2px solid #2C2C2C; /* Darker line for separation */
+        h1 {{
+            border-bottom: 3px solid {MINION_YELLOW}; /* Thick yellow line */
             padding-bottom: 15px;
-        }
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* Playful font */
+            text-shadow: 2px 2px {MINION_GRAY};
+        }}
         
         /* 3. Streamlit Metrics (Emotion Summary Cards) */
-        div[data-testid="stMetric"] {
-            background-color: #1E1E1E; /* Darker background for cards */
+        div[data-testid="stMetric"] {{
+            background-color: {MINION_YELLOW}; /* Yellow background for cards */
             padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #2C2C2C;
-            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4); /* Stronger shadow */
-            transition: all 0.3s ease-in-out;
-        }
-        div[data-testid="stMetric"]:hover {
-            border-color: #BB86FC; /* Highlight on hover */
-            background-color: #242424;
-        }
+            border-radius: 15px; /* Rounded and chunky */
+            border: 3px solid {MINION_BLUE}; /* Blue border */
+            box-shadow: 5px 5px 0px {MINION_DARK}; /* Fun, thick shadow effect */
+            transition: all 0.1s ease-in-out;
+            transform: skew(-2deg); /* SLIGHT playful tilt */
+        }}
+        div[data-testid="stMetric"]:hover {{
+            background-color: #FFEB63; 
+            box-shadow: 2px 2px 0px {MINION_DARK};
+            transform: skew(0deg); /* Straightens on hover */
+        }}
         
-        /* Adjust metric label/value colors for dark theme contrast */
-        div[data-testid="stMetricLabel"] > div {
-            color: #90CAF9 !important; /* Light Blue for labels */
-            font-weight: 600;
-        }
-        div[data-testid="stMetricValue"] {
-            color: #FFFFFF !important;
-            font-size: 2em;
-        }
+        /* Adjust metric value/label colors */
+        div[data-testid="stMetricLabel"] > div {{
+            color: {MINION_DARK} !important;
+            font-weight: 800;
+        }}
+        div[data-testid="stMetricValue"] {{
+            color: {MINION_BLUE} !important;
+            font-size: 2.2em;
+            font-weight: 900;
+        }}
         
         /* 4. Text Area and Input Styling */
-        textarea {
-            background-color: #1E1E1E;
-            color: #E0E0E0;
+        textarea {{
+            background-color: #FFFFF0;
+            color: {MINION_DARK};
             border-radius: 8px;
-            border: 1px solid #3A3A3A;
-        }
+            border: 2px solid {MINION_GRAY};
+        }}
         
-        /* 5. Primary Button Styling */
-        .stButton button {
-            background-color: #03DAC6; /* Secondary accent color (Teal) */
-            color: #121212; /* Dark text for contrast */
-            border-radius: 8px;
-            border: none;
+        /* 5. Primary Button Styling (The big overall blue button!) */
+        .stButton button {{
+            background-color: {MINION_BLUE}; 
+            color: {MINION_YELLOW}; /* Yellow text on blue */
+            border-radius: 10px;
+            border: 2px solid {MINION_DARK};
             padding: 10px 20px;
-            font-weight: bold;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             transition: background-color 0.2s;
-        }
-        .stButton button:hover {
-            background-color: #018786;
+        }}
+        .stButton button:hover {{
+            background-color: #005F99;
             color: white;
-        }
+            border-color: {MINION_YELLOW};
+        }}
 
         /* 6. Tabs Styling */
-        div[role="tablist"] button {
-            font-weight: bold;
-            color: #E0E0E0;
-        }
-        div[data-testid="stTabs"] div[aria-selected="true"] button {
-            border-bottom-color: #BB86FC !important; /* Active tab underline */
-            color: #BB86FC !important;
-        }
+        div[role="tablist"] button {{
+            font-weight: 800;
+            color: {MINION_DARK};
+        }}
+        div[data-testid="stTabs"] div[aria-selected="true"] button {{
+            border-bottom-color: {MINION_YELLOW} !important; /* Active tab underline */
+            color: {MINION_BLUE} !important;
+        }}
         
         /* 7. Expander (Input Section) Styling */
-        .streamlit-expanderHeader {
-            background-color: #1E1E1E;
-            border-radius: 8px;
-            border: 1px solid #2C2C2C;
+        .streamlit-expanderHeader {{
+            background-color: #F8F8F8;
+            border-radius: 10px;
+            border: 1px solid {MINION_GRAY};
             padding: 10px;
-        }
+            font-weight: 600;
+            color: {MINION_DARK};
+        }}
         
         /* 8. Dataframe (Table) Styling */
-        .stDataFrame {
+        .stDataFrame {{
             border-radius: 8px;
-            border: 1px solid #2C2C2C;
-        }
+            border: 2px solid {MINION_GRAY};
+        }}
         
         </style>
         """,
@@ -157,7 +168,7 @@ def detect_emotions(classifier, texts):
         row = {
             'Input Text': text,
             'Dominant Emotion': f"{icon} {dominant_emotion}",
-            'Confidence Score': float(f"{best_prediction['score']:.4f}"), # Convert to float for ProgressColumn
+            'Confidence Score': float(f"{best_prediction['score']:.4f}"),
             'Raw Emotion Label': dominant_emotion 
         }
 
@@ -168,30 +179,30 @@ def detect_emotions(classifier, texts):
 
     return results
 
-# --- Streamlit Application Layout (Applying New CSS) ---
+# --- Streamlit Application Layout (Applying Minions CSS) ---
 
 # Inject CSS at the very start
 inject_custom_css()
 
 # 1. Page Configuration and Title
 st.set_page_config(
-    page_title="AI Emotion Detector",
+    page_title="Minions Emotion Detector",
     layout="wide",
     initial_sidebar_state="auto",
     menu_items={'About': "Emotion Analyzer App using Hugging Face Transformers and Streamlit."}
 )
 
-st.title("🗣️ AI Emotion Analyzer")
+st.title("🍌 Minion Language Detector: POOPAYE!")
 st.markdown(f"""
-<span style='color:#BB86FC;'>Analyze the emotional tone of your text</span> using the **`{MODEL_NAME}`** model.
-""", unsafe_allow_html=True) # Use span for a little color accent
+<span style='color:{MINION_BLUE}; font-weight: bold;'>Analyze the emotional tone of your text</span> using the **`{MODEL_NAME}`** model.
+""", unsafe_allow_html=True)
 
 # 2. Model Initialization
 classifier = initialize_classifier()
 st.markdown("---")
 
 # 3. Input Area
-with st.expander("📝 **Enter Text(s) for Analysis**", expanded=True):
+with st.expander("📝 **BEE DO! Enter Text(s) for Analysis**", expanded=True):
     default_text = (
         "I am so incredibly happy and proud of what we achieved today!\n"
         "This is confusing; I need someone to clarify the instructions for step three.\n"
@@ -225,26 +236,24 @@ st.markdown("---")
 # 4. Analysis Logic and Results Display
 if analyze_button:
     if input_texts:
-        st.subheader("📊 Analysis Results")
+        st.subheader("🍌 Results: KAI-FU-RU!")
         with st.spinner(f"Analyzing {len(input_texts)} sentence(s)..."):
             detection_results = detect_emotions(classifier, input_texts)
 
             if detection_results:
                 df = pd.DataFrame(detection_results)
                 
-                # --- Emotion Count Metrics (Styled by CSS) ---
+                # --- Emotion Count Metrics (Styled by Minions CSS) ---
                 st.markdown("#### Dominant Emotions Summary")
                 
                 emotion_counts = df['Raw Emotion Label'].value_counts()
                 
                 metric_container = st.container()
-                # Ensure the number of columns doesn't exceed 7 for clean layout
                 cols = metric_container.columns(min(len(emotion_counts), 7)) 
 
                 for i, (emotion, count) in enumerate(emotion_counts.items()):
                     if i < 7:
                         icon = EMOTION_ICONS.get(emotion, "")
-                        # The CSS targets stMetric, making these boxes look great
                         cols[i].metric(
                             label=f"{icon} {emotion.capitalize()}", 
                             value=count
@@ -273,9 +282,6 @@ if analyze_button:
                             "Confidence Score": st.column_config.ProgressColumn(
                                 "Confidence Score",
                                 format="%.2f",
-                                # Use the accent color for the progress bar
-                                # Note: ProgressColumn color can only be set globally in the theme or using HTML/custom components, 
-                                # but the dark background improves its visibility significantly.
                                 min_value=0.0,
                                 max_value=1.0,
                             ),
@@ -300,4 +306,6 @@ if analyze_button:
         st.warning("Please enter some text to analyze before clicking the button.")
 
 st.markdown("---")
-st.caption("Powered by Streamlit and Hugging Face Transformers.")
+st.caption("Powered by Streamlit and Hugging Face Transformers. TULALILOO TI AMO!")
+This video provides a fun tutorial on how to draw and color the Minions, which aligns with the application's current visual theme: [How To Draw And Color The Minions For Kids And Toddlers](https://www.youtube.com/watch?v=Ts-cyTTHIpU).
+http://googleusercontent.com/youtube_content/0
