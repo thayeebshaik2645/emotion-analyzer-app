@@ -7,12 +7,13 @@ MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
 # --- PAGE SETUP ---
 st.set_page_config(
-    page_title="🧠 Emotion Detector",
-    page_icon="🧠",
+    page_title="🧠 Emotion Detector [Futuristic]",
+    page_icon="🤖",  # Changed icon for futuristic feel
     layout="wide",
 )
 
-# --- CUSTOM CSS (DARK/NEON THEME - Font Overhaul Included) ---
+# --- CUSTOM CSS (DARK/NEON THEME & Font Overhaul) ---
+# NOTE: This CSS is identical to the last corrected version.
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
@@ -27,7 +28,6 @@ st.markdown("""
         --mono-font: 'Consolas', 'Courier New', monospace; /* Futuristic Monospace Font */
     }
     
-    /* ---------------------------------------------------- */
     /* 2. OVERALL LAYOUT & BACKGROUND */
     .main {
         background: var(--background-dark);
@@ -38,6 +38,16 @@ st.markdown("""
     .stText, .stMarkdown {
         color: var(--text-color-light) !important;
     }
+    
+    /* Apply surface color to primary Streamlit containers for "block" look */
+    .stApp .st-emotion-cache-1pxn4ip, .stApp .st-emotion-cache-1v0pmnt {
+        background-color: var(--surface-color);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    }
+
 
     /* 3. TITLES & TEXT EFFECTS */
     h1 {
@@ -45,7 +55,6 @@ st.markdown("""
         font-weight: 900;
         text-align: center;
         margin-bottom: 0.5rem;
-        /* Neon Glow Effect */
         text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-dark); 
         letter-spacing: 2px;
     }
@@ -58,24 +67,32 @@ st.markdown("""
         margin-top: 2rem;
         margin-bottom: 1rem;
     }
+    
+    /* Info Box styling (for the initial info message) */
+    .stAlert {
+        background-color: var(--surface-color) !important;
+        border: 1px solid var(--primary-dark) !important;
+        color: var(--text-color-light) !important;
+        border-radius: 8px;
+        box-shadow: 0 0 5px var(--primary-dark);
+    }
 
-    /* 4. TEXT AREA EFFECTS (THE KEY CHANGE) */
+    /* 4. TEXT AREA EFFECTS */
     .stTextArea label {
         font-weight: 600;
         color: var(--primary-color);
-        font-family: 'Inter', sans-serif; /* Keep label readable */
+        font-family: 'Inter', sans-serif;
     }
 
-    /* Target the text input element itself */
     textarea {
         border-radius: 10px !important;
         border: 2px solid var(--primary-dark) !important;
         padding: 15px !important;
         background-color: var(--surface-color) !important;
-        color: var(--primary-color) !important; /* Neon text color inside box */
-        font-size: 17px !important; /* Slightly larger for emphasis */
-        font-family: var(--mono-font) !important; /* Monospace/Code-like font */
-        line-height: 1.6; /* Increased line height for better reading */
+        color: var(--primary-color) !important;
+        font-size: 17px !important; 
+        font-family: var(--mono-font) !important; 
+        line-height: 1.6; 
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
         transition: all 0.3s ease;
     }
@@ -105,11 +122,6 @@ st.markdown("""
         box-shadow: 0 0 25px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
-    div.stButton > button:first-child:active {
-        transform: translateY(0px);
-        box-shadow: 0 0 5px var(--primary-color);
-    }
-
     /* 6. DATAFRAME EFFECTS & EMOTION COLORS */
     .stDataFrame {
         border-radius: 10px !important; 
@@ -119,10 +131,9 @@ st.markdown("""
         background-color: var(--surface-color); 
     }
     
-    /* Dataframe content text font */
     .stDataFrame .data-row, .stDataFrame th, .stDataFrame td {
         color: var(--text-color-light) !important;
-        font-family: var(--mono-font) !important; /* Use monospace font for results */
+        font-family: var(--mono-font) !important; 
     }
 
     /* --- EMOTION SPECIFIC COLORING (Cyberpunk/Neon Tones) --- */
@@ -136,48 +147,16 @@ st.markdown("""
         min-width: 110px;
         transition: all 0.3s ease; 
         text-shadow: 0 0 2px black;
-        font-family: 'Inter', sans-serif !important; /* Emotion label stands out */
+        font-family: 'Inter', sans-serif !important;
     }
 
-    /* 🔴 ANGER / DISGUST (Fiery Red/Pink) */
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("ANGER"),
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("DISGUST") {
-        background-color: #ff3366; 
-        color: var(--background-dark); 
-        box-shadow: 0 0 8px #ff3366;
-    }
-    
-    /* 🟡 JOY / HAPPINESS / EXCITEMENT (Electric Yellow) */
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("JOY"),
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("HAPPINESS"),
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("EXCITEMENT") {
-        background-color: #fffb00; 
-        color: var(--background-dark); 
-        box-shadow: 0 0 8px #fffb00;
-    }
-    
-    /* 🔵 SADNESS / LONELINESS (Deep Cyber Blue) */
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("SADNESS"),
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("LONELINESS") {
-        background-color: #00aaff; 
-        color: var(--background-dark); 
-        box-shadow: 0 0 8px #00aaff;
-    }
-    
-    /* 🟣 FEAR / SURPRISE (Vibrant Purple) */
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("FEAR"),
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("SURPRISE") {
-        background-color: #ff00ff; 
-        color: var(--background-dark); 
-        box-shadow: 0 0 8px #ff00ff;
-    }
+    /* Color definitions */
+    div[data-testid="stDataframe"] .css-1r6cnx6:contains("ANGER"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("DISGUST") { background-color: #ff3366; color: var(--background-dark); box-shadow: 0 0 8px #ff3366;}
+    div[data-testid="stDataframe"] .css-1r6cnx6:contains("JOY"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("HAPPINESS"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("EXCITEMENT") { background-color: #fffb00; color: var(--background-dark); box-shadow: 0 0 8px #fffb00;}
+    div[data-testid="stDataframe"] .css-1r6cnx6:contains("SADNESS"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("LONELINESS") { background-color: #00aaff; color: var(--background-dark); box-shadow: 0 0 8px #00aaff;}
+    div[data-testid="stDataframe"] .css-1r6cnx6:contains("FEAR"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("SURPRISE") { background-color: #ff00ff; color: var(--background-dark); box-shadow: 0 0 8px #ff00ff;}
+    div[data-testid="stDataframe"] .css-1r6cnx6:contains("NEUTRAL") { background-color: var(--primary-color); color: var(--background-dark); box-shadow: 0 0 8px var(--primary-color);}
 
-    /* ⚪ NEUTRAL / OTHER (Primary Neon Color) */
-    div[data-testid="stDataframe"] .css-1r6cnx6:contains("NEUTRAL") {
-        background-color: var(--primary-color); 
-        color: var(--background-dark); 
-        box-shadow: 0 0 8px var(--primary-color);
-    }
 
     /* 7. DIVIDER & FOOTER */
     hr {
@@ -211,14 +190,14 @@ st.markdown("""
 def initialize_classifier():
     """Load and cache the transformer model."""
     try:
-        # Custom message style for loading - using CSS variable directly
-        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);">Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
+        # Custom message style for loading
+        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);">SYSTEM STATUS: Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
         classifier = pipeline(
             "text-classification",
             model=MODEL_NAME,
             return_all_scores=True
         )
-        st.success("✅ Model loaded successfully!")
+        st.success("✅ SYSTEM STATUS: Model loaded successfully!")
         return classifier
     except Exception as e:
         st.error(f"Error loading model: {e}")
@@ -239,46 +218,83 @@ def detect_emotions(classifier, texts):
         })
     return results
 
-# --- HEADER ---
+# =================================================================
+# --- FUTURISTIC UI LAYOUT CHANGES ---
+# =================================================================
+
 st.title("🧠 EMOTION DETECTOR FROM TEXT")
-# FIX: Replaced st.get_style() with direct CSS variable and standard text
-st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">Analyze sentiment in text with a futuristic, neon glow interface.</p>', unsafe_allow_html=True)
+st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">ANALYSIS PROTOCOL V1.2.0 | EMOTIONAL RESPONSE LOGGING INTERFACE</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
-# --- INPUT ---
-st.subheader("📝 ENTER TEXT TO ANALYZE")
+# 1. INPUT BLOCK (Centralized and clearly bordered)
+input_container = st.container()
+with input_container:
+    st.subheader("📝 INPUT TERMINAL")
+    
+    # Use columns to center the text area and button
+    col1, col_input, col2 = st.columns([1, 4, 1])
 
-default_text = """I am so incredibly happy and proud of what we achieved today!
+    default_text = """I am so incredibly happy and proud of what we achieved today!
 This is confusing; I need someone to clarify the instructions for step three.
 My heart is racing, I'm genuinely terrified of what might happen next."""
-
-input_text = st.text_area(
-    "Enter one sentence per line:",
-    value=default_text,
-    height=200
-)
-texts = [t.strip() for t in input_text.split("\n") if t.strip()]
-
-# --- ANALYZE BUTTON ---
-analyze = st.button("🔍 INITIATE ANALYSIS")
+    
+    with col_input:
+        input_text = st.text_area(
+            "Input Log - Enter one sentence per line:",
+            value=default_text,
+            height=200,
+            key="input_text_area"
+        )
+        texts = [t.strip() for t in input_text.split("\n") if t.strip()]
+        
+        # Center the button using columns
+        col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
+        with col_btn:
+             analyze = st.button("🔍 INITIATE ANALYSIS", use_container_width=True)
 
 # Initialize classifier
 classifier = initialize_classifier()
 
-# --- RESULTS ---
+st.markdown("---")
+
+# 2. RESULTS BLOCK (Conditional display)
 if analyze:
     if texts:
-        st.subheader("📊 ANALYSIS RESULTS")
-        with st.spinner("Processing data... Stand by."):
-            results = detect_emotions(classifier, texts)
-            df = pd.DataFrame(results)
+        results_container = st.container()
+        with results_container:
+            st.subheader("📊 OUTPUT DATA LOG")
             
-            # Show table
-            st.dataframe(df, hide_index=True, use_container_width=True)
+            # Use columns for a structured, dashboard look
+            col_graph, col_data = st.columns([1, 2])
+            
+            with st.spinner("Processing data... Stand by."):
+                results = detect_emotions(classifier, texts)
+                df = pd.DataFrame(results)
+                
+                # --- Dominant Emotion Summary (Left Column) ---
+                dominant_emotion = df['Dominant Emotion'].mode()[0]
+                total_sentences = len(df)
+                
+                with col_graph:
+                    st.info(f"""
+                        **SYSTEM SUMMARY**
+                        - **Total Entries:** {total_sentences}
+                        - **Most Frequent:** {dominant_emotion}
+                        """)
+                    
+                    # You could add a simple bar chart here for more UI
+                    # df_count = df['Dominant Emotion'].value_counts().reset_index()
+                    # df_count.columns = ['Emotion', 'Count']
+                    # st.bar_chart(df_count, x='Emotion', y='Count', color='#00ffc8')
+
+                # --- Detailed Log Table (Right Column) ---
+                with col_data:
+                    st.markdown("#### Detailed Analysis Log:")
+                    st.dataframe(df, hide_index=True, use_container_width=True)
     else:
         st.warning("Input required. Please provide text before initiating analysis.")
 
+# 3. FOOTER
 st.markdown("---")
-# Custom footer for the fade-in effect
 st.markdown('<p class="st-emotion-detector-caption">SYSTEM ONLINE | BUILD BY CSE-A</p>', unsafe_allow_html=True)
