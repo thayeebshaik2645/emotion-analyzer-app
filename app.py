@@ -216,18 +216,20 @@ def detect_emotions(classifier, texts):
     return results
 
 # =================================================================
-# --- FUTURISTIC UI LAYOUT ---
+# --- FUTURISTIC UI LAYOUT (UPDATED HEADERS) ---
 # =================================================================
 
-st.title("🧠 EMOTION DETECTOR FROM TEXT")
-st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">DETEC YOUR EMOTION FROM TEXT</p>', unsafe_allow_html=True)
+# ATTENTION-GRABBING MAIN TITLE
+st.title("⚡ EMOTION DETECTOR FROM TEXT ⚡")
+st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">ACCESSING DEEP LEARNING TEXT ANALYSIS INTERFACE 🤖</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
 # 1. INPUT BLOCK (Terminal style)
 input_container = st.container()
 with input_container:
-    st.subheader("📝 ENTER THE INPUT")
+    # ATTENTION-GRABBING SUBHEADER
+    st.subheader("⌨️ INPUT CONSOLE: FEED THE DATA")
     
     col1, col_input, col2 = st.columns([1, 4, 1])
 
@@ -246,7 +248,8 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
         
         col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
         with col_btn:
-             analyze = st.button("🔍 INITIATE ANALYSIS", use_container_width=True)
+             # ATTENTION-GRABBING BUTTON TEXT
+             analyze = st.button("🔴 INITIATE FULL ANALYSIS 🚀", use_container_width=True)
 
 # Initialize classifier
 classifier = initialize_classifier()
@@ -258,7 +261,8 @@ if analyze:
     if texts:
         results_container = st.container()
         with results_container:
-            st.subheader("📊 DETAILED ANALYSIS LOG")
+            # ATTENTION-GRABBING SUBHEADER
+            st.subheader("📈 DETAILED EMOTION LOG: CLASSIFIED RESULTS")
             
             # Added two columns for better layout density
             cols = st.columns(2)
@@ -302,7 +306,7 @@ if analyze:
                 # --- END NEW OUTPUT PATTERN ---
                 
     else:
-        st.warning("Input required. Please provide text before initiating analysis.")
+        st.warning("SYSTEM ALERT: Input required. Please provide text before initiating analysis.")
 
 # 3. FOOTER
 st.markdown("---")
