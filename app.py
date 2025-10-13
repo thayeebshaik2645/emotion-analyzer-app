@@ -6,7 +6,7 @@ from transformers import pipeline
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
 # --- MINIONS COLOR PALETTE ---
-# Based on search results: Banana Yellow, Ocean Boat Blue, Spanish Gray
+# Based on Minions (Yellow, Blue, Gray)
 MINION_YELLOW = "#FCE029"  # Minion Skin/Body
 MINION_BLUE = "#0A75BC"     # Overalls
 MINION_GRAY = "#949699"     # Goggles/Metals
@@ -132,13 +132,13 @@ def inject_custom_css():
         unsafe_allow_html=True
     )
 
-# --- Core Functions (kept the same) ---
+# --- Core Functions (Based on the original code, adapted for UI data) ---
 
 @st.cache_resource
 def initialize_classifier():
     """Initializes the Hugging Face emotion classification pipeline and caches it."""
     try:
-        with st.spinner(f"Loading emotion classification model: {MODEL_NAME}..."):
+        with st.spinner(f"Loading emotion classification model: {MODEL_NAME}... (This may take a moment on first run)"):
             classifier = pipeline(
                 "text-classification",
                 model=MODEL_NAME,
@@ -165,13 +165,18 @@ def detect_emotions(classifier, texts):
         dominant_emotion = best_prediction['label'].upper()
         icon = EMOTION_ICONS.get(dominant_emotion, "❓")
         
+        # NOTE: Confidence Score must be a float for st.column_config.ProgressColumn
         row = {
             'Input Text': text,
+            # UI Enhancement: Prepend icon to the emotion
             'Dominant Emotion': f"{icon} {dominant_emotion}",
+            # Use float here for the progress bar
             'Confidence Score': float(f"{best_prediction['score']:.4f}"),
+            # Added for internal count tracking
             'Raw Emotion Label': dominant_emotion 
         }
 
+        # Include all scores for the Advanced tab
         for item in prediction_list:
             row[f"Score - {item['label'].upper()}"] = f"{item['score']:.4f}"
 
@@ -179,7 +184,7 @@ def detect_emotions(classifier, texts):
 
     return results
 
-# --- Streamlit Application Layout (Applying Minions CSS) ---
+# --- Streamlit Application Layout (Utilizing the Minions Theme) ---
 
 # Inject CSS at the very start
 inject_custom_css()
@@ -188,8 +193,7 @@ inject_custom_css()
 st.set_page_config(
     page_title="Minions Emotion Detector",
     layout="wide",
-    initial_sidebar_state="auto",
-    menu_items={'About': "Emotion Analyzer App using Hugging Face Transformers and Streamlit."}
+    initial_sidebar_state="auto"
 )
 
 st.title("🍌 Minion Language Detector: POOPAYE!")
@@ -197,11 +201,11 @@ st.markdown(f"""
 <span style='color:{MINION_BLUE}; font-weight: bold;'>Analyze the emotional tone of your text</span> using the **`{MODEL_NAME}`** model.
 """, unsafe_allow_html=True)
 
-# 2. Model Initialization
+# 2. Model Initialization (called once and cached)
 classifier = initialize_classifier()
 st.markdown("---")
 
-# 3. Input Area
+# 3. Input Area (Styled by CSS)
 with st.expander("📝 **BEE DO! Enter Text(s) for Analysis**", expanded=True):
     default_text = (
         "I am so incredibly happy and proud of what we achieved today!\n"
@@ -233,7 +237,7 @@ with st.expander("📝 **BEE DO! Enter Text(s) for Analysis**", expanded=True):
 
 st.markdown("---")
 
-# 4. Analysis Logic and Results Display
+# 4. Analysis Logic and Results Display (Styled by CSS)
 if analyze_button:
     if input_texts:
         st.subheader("🍌 Results: KAI-FU-RU!")
@@ -243,7 +247,7 @@ if analyze_button:
             if detection_results:
                 df = pd.DataFrame(detection_results)
                 
-                # --- Emotion Count Metrics (Styled by Minions CSS) ---
+                # --- Emotion Count Metrics (Utilizing the styled stMetric cards) ---
                 st.markdown("#### Dominant Emotions Summary")
                 
                 emotion_counts = df['Raw Emotion Label'].value_counts()
@@ -264,9 +268,11 @@ if analyze_button:
                 # --- Tabular Results with Progress Bar ---
                 st.markdown("#### Detailed Analysis Table")
                 
+                # Using tabs for cleaner organization
                 tab_simple, tab_advanced = st.tabs(["Simple Results", "All Confidence Scores"])
 
                 with tab_simple:
+                    # Keep only essential columns for the simple view
                     simple_df = df.drop(columns=['Raw Emotion Label']) 
                     simple_df = simple_df[['Input Text', 'Dominant Emotion', 'Confidence Score']]
                     
@@ -275,24 +281,19 @@ if analyze_button:
                         hide_index=True,
                         use_container_width=True,
                         column_config={
-                            "Dominant Emotion": st.column_config.Column(
-                                "Dominant Emotion",
-                                width="small"
-                            ),
+                            "Dominant Emotion": st.column_config.Column("Dominant Emotion", width="small"),
                             "Confidence Score": st.column_config.ProgressColumn(
                                 "Confidence Score",
                                 format="%.2f",
                                 min_value=0.0,
                                 max_value=1.0,
                             ),
-                            "Input Text": st.column_config.TextColumn(
-                                "Input Text",
-                                width="large"
-                            )
+                            "Input Text": st.column_config.TextColumn("Input Text", width="large")
                         }
                     )
                 
                 with tab_advanced:
+                    # Drop UI helper columns for the raw data view
                     advanced_df = df.drop(columns=['Dominant Emotion', 'Confidence Score', 'Raw Emotion Label'])
                     st.dataframe(
                         advanced_df,
@@ -307,5 +308,3 @@ if analyze_button:
 
 st.markdown("---")
 st.caption("Powered by Streamlit and Hugging Face Transformers. TULALILOO TI AMO!")
-This video provides a fun tutorial on how to draw and color the Minions, which aligns with the application's current visual theme: [How To Draw And Color The Minions For Kids And Toddlers](https://www.youtube.com/watch?v=Ts-cyTTHIpU).
-http://googleusercontent.com/youtube_content/0
