@@ -8,7 +8,7 @@ MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 # --- PAGE SETUP ---
 st.set_page_config(
     page_title="🧠 Emotion Detector From Text",
-    page_icon="https://p7.hiclipart.com/preview/573/335/801/stock-photography-robot-royalty-free-robots.jpg",  # Changed icon for futuristic feel
+    page_icon="https://p7.hiclipart.com/preview/573/335/801/stock-photography-robot-royalty-free-robots.jpg",
     layout="wide",
 )
 
@@ -75,7 +75,7 @@ st.markdown("""
         border-radius: 8px;
         box-shadow: 0 0 5px var(--primary-dark);
     }
-    
+
     /* 4. TEXT AREA EFFECTS */
     .stTextArea label {
         font-weight: 600;
@@ -121,7 +121,7 @@ st.markdown("""
         box-shadow: 0 0 25px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
-    /* 6. DATAFRAME STYLING (Kept for the st.info box's internal styling) */
+    /* 6. DATAFRAME EFFECTS & EMOTION COLORS */
     .stDataFrame {
         border-radius: 10px !important; 
         box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.7); 
@@ -130,6 +130,33 @@ st.markdown("""
         background-color: var(--surface-color); 
     }
     
+    .stDataFrame .data-row, .stDataFrame th, .stDataFrame td {
+        color: var(--text-color-light) !important;
+        font-family: var(--mono-font) !important; 
+    }
+
+    /* --- EMOTION SPECIFIC COLORING (Cyberpunk/Neon Tones) --- */
+    [data-testid="stDataframe"] div:nth-child(3) > div:not(:first-child) { 
+        font-weight: 800 !important;
+        padding: 6px 10px !important;
+        border-radius: 6px;
+        text-align: center;
+        margin: 4px 0;
+        display: inline-block;
+        min-width: 110px;
+        transition: all 0.3s ease; 
+        text-shadow: 0 0 2px black;
+        font-family: 'Inter', sans-serif !important;
+    }
+
+    /* Color definitions */
+    div[data-testid="stDataframe"] .css-1r6cnx6:contains("ANGER"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("DISGUST") { background-color: #ff3366; color: var(--background-dark); box-shadow: 0 0 8px #ff3366;}
+    div[data-testid="stDataframe"] .css-1r6cnx6:contains("JOY"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("HAPPINESS"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("EXCITEMENT") { background-color: #fffb00; color: var(--background-dark); box-shadow: 0 0 8px #fffb00;}
+    div[data-testid="stDataframe"] .css-1r6cnx6:contains("SADNESS"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("LONELINESS") { background-color: #00aaff; color: var(--background-dark); box-shadow: 0 0 8px #00aaff;}
+    div[data-testid="stDataframe"] .css-1r6cnx6:contains("FEAR"), div[data-testid="stDataframe"] .css-1r6cnx6:contains("SURPRISE") { background-color: #ff00ff; color: var(--background-dark); box-shadow: 0 0 8px #ff00ff;}
+    div[data-testid="stDataframe"] .css-1r6cnx6:contains("NEUTRAL") { background-color: var(--primary-color); color: var(--background-dark); box-shadow: 0 0 8px var(--primary-color);}
+
+
     /* 7. DIVIDER & FOOTER */
     hr {
         border: 0;
@@ -204,7 +231,6 @@ input_container = st.container()
 with input_container:
     st.subheader("📝 ENTER THE INPUT")
     
-    # Use columns to center the text area and button
     col1, col_input, col2 = st.columns([1, 4, 1])
 
     default_text = """I am so incredibly happy and proud of what we achieved today!
@@ -220,7 +246,6 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
         )
         texts = [t.strip() for t in input_text.split("\n") if t.strip()]
         
-        # Center the button using columns
         col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
         with col_btn:
              analyze = st.button("🔍 INITIATE ANALYSIS", use_container_width=True)
@@ -230,31 +255,23 @@ classifier = initialize_classifier()
 
 st.markdown("---")
 
-# 2. RESULTS BLOCK (Conditional display - SIMPLIFIED)
+# 2. RESULTS BLOCK (Restored Data Log Table)
 if analyze:
     if texts:
         results_container = st.container()
         with results_container:
-            st.subheader("📊 ANALYSIS SUMMARY")
+            st.subheader("📊 DETAILED ANALYSIS LOG")
             
-            # Use columns to keep the summary centered/structured
-            col_left, col_summary, col_right = st.columns([1, 2, 1])
+            # Use a full-width column to hold the dataframe
+            col_data, = st.columns([1])
             
             with st.spinner("Processing data... Stand by."):
                 results = detect_emotions(classifier, texts)
                 df = pd.DataFrame(results)
                 
-                # --- Dominant Emotion Summary ---
-                dominant_emotion = df['Dominant Emotion'].mode()[0]
-                total_sentences = len(df)
-                
-                with col_summary:
-                    st.info(f"""
-                        **SYSTEM SUMMARY**
-                        - **Total Entries:** **{total_sentences}**
-                        - **Most Frequent Emotion:** **{dominant_emotion}**
-                        - **Raw Output Data Log Removed per protocol request.**
-                        """)
+                with col_data:
+                    # The restored detailed, color-coded table
+                    st.dataframe(df, hide_index=True, use_container_width=True)
                     
     else:
         st.warning("Input required. Please provide text before initiating analysis.")
