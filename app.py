@@ -31,7 +31,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (DARK/NEON THEME & Font Overhaul) ---
+# --- CUSTOM CSS (The CSS styles were kept the same for the visual theme to work) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
@@ -187,14 +187,14 @@ st.markdown("""
 def initialize_classifier():
     """Load and cache the transformer model."""
     try:
-        # Custom message style for loading
-        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);">SYSTEM STATUS: Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
+        # Simplified status message
+        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);">SYSTEM STATUS: Starting the brain... Wait a bit.</div>', unsafe_allow_html=True)
         classifier = pipeline(
             "text-classification",
             model=MODEL_NAME,
             return_all_scores=True
         )
-        st.success("✅ SYSTEM STATUS: Model loaded successfully!")
+        st.success("✅ SYSTEM STATUS: Brain is ready!")
         return classifier
     except Exception as e:
         st.error(f"Error loading model: {e}")
@@ -216,20 +216,20 @@ def detect_emotions(classifier, texts):
     return results
 
 # =================================================================
-# --- FUTURISTIC UI LAYOUT (UPDATED HEADERS) ---
+# --- FUTURISTIC UI LAYOUT (SIMPLIFIED HEADERS) ---
 # =================================================================
 
-# ATTENTION-GRABBING MAIN TITLE
-st.title("⚡ EMOTION DETECTOR FROM TEXT ⚡")
-st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">ACCESSING DEEP LEARNING TEXT ANALYSIS INTERFACE 🤖</p>', unsafe_allow_html=True)
+# SIMPLIFIED MAIN TITLE
+st.title("⚡ TEXT EMOTION DETECTOR ⚡")
+st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">TELLS YOU THE FEELING IN YOUR WORDS 🤖</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
 # 1. INPUT BLOCK (Terminal style)
 input_container = st.container()
 with input_container:
-    # ATTENTION-GRABBING SUBHEADER
-    st.subheader("⌨️ INPUT CONSOLE: FEED THE DATA")
+    # SIMPLIFIED SUBHEADER
+    st.subheader("⌨️ PUT YOUR TEXT HERE")
     
     col1, col_input, col2 = st.columns([1, 4, 1])
 
@@ -239,7 +239,7 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
     
     with col_input:
         input_text = st.text_area(
-            "Input Log - Enter one sentence per line:",
+            "Text Box - Write one sentence on each line:",
             value=default_text,
             height=200,
             key="input_text_area"
@@ -248,8 +248,8 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
         
         col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
         with col_btn:
-             # ATTENTION-GRABBING BUTTON TEXT
-             analyze = st.button("🔴 INITIATE FULL ANALYSIS 🚀", use_container_width=True)
+             # SIMPLIFIED BUTTON TEXT
+             analyze = st.button("🔴 START THE CHECK 🚀", use_container_width=True)
 
 # Initialize classifier
 classifier = initialize_classifier()
@@ -261,13 +261,14 @@ if analyze:
     if texts:
         results_container = st.container()
         with results_container:
-            # ATTENTION-GRABBING SUBHEADER
-            st.subheader("📈 DETAILED EMOTION LOG: CLASSIFIED RESULTS")
+            # SIMPLIFIED SUBHEADER
+            st.subheader("📈 THE RESULTS: FEELINGS FOUND")
             
             # Added two columns for better layout density
             cols = st.columns(2)
             
-            with st.spinner("Processing data... Stand by."):
+            # Simplified spinner text
+            with st.spinner("Thinking... Please wait."):
                 results = detect_emotions(classifier, texts)
                 
                 # --- NEW OUTPUT PATTERN: CUSTOM CARDS WITH GIFS ---
@@ -298,7 +299,7 @@ if analyze:
                                 <div class="result-text">"{input_text}"</div>
                                 <div style="display: flex; align-items: center; justify-content: flex-end;">
                                     <div class="result-confidence">
-                                        CONFIDENCE: {confidence}
+                                        TRUST LEVEL: {confidence}
                                     </div>
                                 </div>
                             </div>
@@ -306,8 +307,9 @@ if analyze:
                 # --- END NEW OUTPUT PATTERN ---
                 
     else:
-        st.warning("SYSTEM ALERT: Input required. Please provide text before initiating analysis.")
+        # Simplified warning message
+        st.warning("HEY! You need to write some text first before starting the check.")
 
 # 3. FOOTER
 st.markdown("---")
-st.markdown('<p class="st-emotion-detector-caption"> BUILD BY CSE-A</p>', unsafe_allow_html=True)
+st.markdown('<p class="st-emotion-detector-caption"> BUILT BY CSE-A</p>', unsafe_allow_html=True)
