@@ -7,8 +7,8 @@ MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
 # --- PAGE SETUP ---
 st.set_page_config(
-    page_title="🧠 Emotion Detector [Futuristic]",
-    page_icon="🤖",  # Changed icon for futuristic feel
+    page_title="🧠 Emotion Detector From Text",
+    page_icon="https://p7.hiclipart.com/preview/573/335/801/stock-photography-robot-royalty-free-robots.jpg",  # Changed icon for futuristic feel
     layout="wide",
 )
 
@@ -223,14 +223,14 @@ def detect_emotions(classifier, texts):
 # =================================================================
 
 st.title("🧠 EMOTION DETECTOR FROM TEXT")
-st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">ANALYSIS PROTOCOL V1.2.0 | EMOTIONAL RESPONSE LOGGING INTERFACE</p>', unsafe_allow_html=True)
+st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--mono-font);">DETEC YOUR EMOTION FROM TEXT</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
 # 1. INPUT BLOCK (Centralized and clearly bordered)
 input_container = st.container()
 with input_container:
-    st.subheader("📝 INPUT TERMINAL")
+    st.subheader("📝 ENTER THE INPUT")
     
     # Use columns to center the text area and button
     col1, col_input, col2 = st.columns([1, 4, 1])
@@ -297,4 +297,5 @@ if analyze:
 
 # 3. FOOTER
 st.markdown("---")
-st.markdown('<p class="st-emotion-detector-caption">SYSTEM ONLINE | BUILD BY CSE-A</p>', unsafe_allow_html=True)
+st.markdown('<p class="st-emotion-detector-caption"> BUILD BY CSE-A</p>', unsafe_allow_html=True)
+
