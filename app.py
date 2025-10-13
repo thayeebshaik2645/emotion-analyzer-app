@@ -191,7 +191,7 @@ def initialize_classifier():
     """Load and cache the transformer model."""
     try:
         # Custom message style for loading
-        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);">SYSTEM STATUS: Initializing core systems... Please wait.</div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="color: var(--primary-color); font-family: var(--mono-font);"> Please wait.</div>', unsafe_allow_html=True)
         classifier = pipeline(
             "text-classification",
             model=MODEL_NAME,
@@ -298,4 +298,5 @@ if analyze:
 # 3. FOOTER
 st.markdown("---")
 st.markdown('<p class="st-emotion-detector-caption"> BUILD BY CSE-A</p>', unsafe_allow_html=True)
+
 
