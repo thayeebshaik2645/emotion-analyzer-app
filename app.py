@@ -123,16 +123,16 @@ def detect_emotions(classifier, texts):
     return results
 
 # --- HEADER ---
-st.title("🧠 Emotion Detector Dashboard")
+st.title("🧠 Emotion Detector From Text")
 st.markdown("""
 Detect emotions in text using a fine-tuned Transformer model.
-Paste your sentences below and click **Analyze** to see the results!
+Enter your sentences below and click **Analyze** to see the results!
 """)
 
 st.markdown("---")
 
 # --- INPUT ---
-st.subheader("📝 Step 1: Enter Text(s) to Analyze")
+st.subheader("📝Enter Text to Analyze")
 
 default_text = """I am so incredibly happy and proud of what we achieved today!
 This is confusing; I need someone to clarify the instructions for step three.
@@ -164,5 +164,6 @@ if analyze:
         st.warning("Please enter some text before clicking *Analyze*.")
 
 st.markdown("---")
-st.caption("Built with ❤️ using Streamlit and Hugging Face Transformers.")
+st.caption("CSE-A")
+
 
