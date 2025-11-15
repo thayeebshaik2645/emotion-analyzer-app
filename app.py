@@ -17,7 +17,7 @@ EMOTION_GIFS = {
     "DISGUST": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29sb29oMWNzYjk4ZnRlMTlkenBmNTd1dmZjemVjaGI0Z21oYXRvZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jsNiI5nMGQurggwpkN/giphy.webp",
     "EXCITEMENT": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MmZnc3Q0c2FoMXR6aDZtc2xxZG45dHhtbHY1Mms3bTFxbnk2eWJoeSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LN5bH1r7UEpSRbcN7M/giphy.webp",
     "LONELINESS": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXlmdzVmNXdhemlwY2F4N2ZoZnJzaDM3bnBsOTk3ejkwZmtzZ2JtMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/StAnQV9TUCuys/giphy.webp",
-    "SURPRISE": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eTZ6YmNrZHV3OHd1OHhmcmlqOXVzMHJua2JjNXpwYWkxeTJ3bWp6bCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Gl7mfimOjkkGl5mMDS/giphy.webp",
+    "SURPRISE": "https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eTZ6YmNrZHV3OHd1OHhmcmlqOXVzMHJua2JjNXpwYWkxeTJ3bWp6bCZlcD12MV9naWZzX3NlYXJjaCZjdT1n/Gl7mfimOjkkGl5mMDS/giphy.webp",
 }
 
 # --- PAGE SETUP ---
@@ -27,38 +27,32 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (Stranger Things Theme) ---
+# --- CUSTOM CSS (Professional Dark Mode) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
     /* 1. FONT IMPORTS */
-    /* MonteCarlo is the closest publicly available font to the Stranger Things logo font */
-    @import url('https://fonts.googleapis.com/css2?family=MonteCarlo&family=Roboto:wght@400;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;900&family=Roboto+Mono:wght@400;600&display=swap');
     
-    /* 2. COLOR PALETTE DEFINITION (STRANGER THINGS) */
+    /* 2. COLOR PALETTE DEFINITION (PROFESSIONAL DARK MODE) */
     :root {
-        --primary-color: #e21c22; /* Iconic Deep Red */
-        --primary-dark: #8c1014;  /* Darker Red */
-        --background-dark: #0f0f0f; /* Near-Black/Upside Down */
-        --surface-color: #1a1a1a; /* Dark Card Surface */
-        --text-color-light: #f0f0f0; 
-        --text-color-secondary: #999999; 
+        --primary-color: #007bff; /* Vibrant Blue Accent */
+        --primary-light: #52a8ff; 
+        --background-dark: #1e1e2f; /* Deep Navy Background */
+        --surface-color: #2b2b40; /* Slightly lighter Card Surface */
+        --text-color-light: #e0e0e0; 
+        --text-color-secondary: #aaaaaa; 
         
-        --main-font: 'Roboto', sans-serif; 
-        --title-font: 'MonteCarlo', cursive; 
-        
-        --glow-red: 0 0 5px var(--primary-color), 0 0 10px var(--primary-dark);
+        --main-font: 'Source Sans 3', sans-serif; 
+        --mono-font: 'Roboto Mono', monospace; 
     }
     
-    /* --- EMOTION SPECIFIC COLOR MAP (Subtle Red/Dark Tones) --- */
-    /* Emotion colors maintain their distinctiveness but are muted/darkened to fit the theme */
-    .emotion-anger { --emotion-color: #cc0000; } 
-    .emotion-joy { --emotion-color: #008000; } 
-    .emotion-sadness { --emotion-color: #0000cc; } 
-    .emotion-fear { --emotion-color: #8b008b; } 
-    .emotion-neutral { --emotion-color: #555555; }
-    .emotion-disgust { --emotion-color: #666600; } 
-    .emotion-surprise { --emotion-color: #cc6600; } 
+    /* --- EMOTION SPECIFIC COLOR MAP (Color-Coded, but less aggressive) --- */
+    .emotion-anger, .emotion-disgust { --emotion-color: #dc3545; } /* Red */
+    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #28a745; } /* Green */
+    .emotion-sadness, .emotion-loneliness { --emotion-color: #007bff; } /* Blue (Matches primary) */
+    .emotion-fear, .emotion-surprise { --emotion-color: #ffc107; } /* Yellow/Orange */
+    .emotion-neutral { --emotion-color: #6c757d; } /* Gray */
 
     
     /* 3. OVERALL LAYOUT & BACKGROUND */
@@ -67,34 +61,23 @@ st.markdown("""
         padding: 3rem 4rem; 
         font-family: var(--main-font); 
         color: var(--text-color-light); 
-        /* Subtle Upside Down texture effect */
-        background-image: radial-gradient(circle, rgba(20,20,20,0.8) 0%, rgba(15,15,15,1) 100%);
     }
     .stApp .st-emotion-cache-1pxn4ip, .stApp .st-emotion-cache-1v0pmnt {
         background-color: var(--surface-color);
-        border-radius: 5px;
+        border-radius: 8px;
         padding: 25px;
         margin-bottom: 25px;
-        box-shadow: 0 0 15px rgba(226, 28, 34, 0.3); /* Red glow around containers */
-        border: 1px solid var(--primary-dark);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); 
     }
 
     /* 4. TITLES & TEXT EFFECTS */
     h1 {
         color: var(--primary-color);
-        font-weight: 700;
-        font-family: var(--title-font);
+        font-weight: 900;
+        font-family: var(--main-font);
         text-align: center;
-        font-size: 5rem; /* Larger, more dramatic title */
-        letter-spacing: 15px;
-        margin-top: 1rem;
-        margin-bottom: 1.5rem;
-        /* The signature red text glow effect */
-        text-shadow: 
-            0 0 7px var(--primary-color), 
-            0 0 10px var(--primary-color), 
-            0 0 20px var(--primary-dark), 
-            0 0 40px var(--primary-dark);
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
     }
     
     /* --- SECTION SUBHEADER (h3) --- */
@@ -102,62 +85,59 @@ st.markdown("""
         color: var(--text-color-light);
         font-family: var(--main-font); 
         font-weight: 700; 
-        border-left: 5px solid var(--primary-color);
-        padding-left: 10px;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 5px;
         margin-top: 2rem;
         margin-bottom: 1.5rem;
         font-size: 1.5rem;
-        letter-spacing: 1px;
     }
-    /* Secondary text for model name */
+    /* Subtitle/model name */
     p[data-testid="stMarkdownContainer"] {
         color: var(--text-color-secondary) !important;
         text-align: center;
-        font-family: monospace;
+        font-family: var(--mono-font);
     }
 
     /* 5. TEXT AREA EFFECTS */
     textarea {
-        border-radius: 5px !important;
-        border: 2px solid var(--primary-dark) !important;
-        background-color: #0d0d0d !important; /* Very dark input field */
-        color: var(--primary-color) !important;
+        border-radius: 8px !important;
+        border: 1px solid var(--primary-color) !important;
+        background-color: #121220 !important; /* Very dark input field */
+        color: var(--text-color-light) !important;
         font-size: 16px !important; 
-        font-family: monospace !important; 
-        box-shadow: 0 0 5px rgba(226, 28, 34, 0.4); 
+        font-family: var(--mono-font) !important; 
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.2); 
     }
 
     /* 6. BUTTON EFFECTS */
     div.stButton > button:first-child {
         background: var(--primary-color);
-        color: var(--background-dark);
-        font-weight: 900;
+        color: white;
+        font-weight: 700;
         font-family: var(--main-font);
-        border-radius: 5px;
-        padding: 0.8em 2em;
-        box-shadow: 0 0 10px var(--primary-color); 
+        border-radius: 8px;
+        padding: 0.6em 1.5em;
+        box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3); 
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
         transition: all 0.2s ease;
         border: none;
     }
     div.stButton > button:first-child:hover {
-        transform: scale(1.02); 
-        background: var(--primary-dark); 
-        color: var(--primary-color); 
-        box-shadow: 0 0 20px var(--primary-color); 
+        transform: translateY(-2px); 
+        background: var(--primary-light); 
+        box-shadow: 0 6px 15px rgba(0, 123, 255, 0.5); 
     }
     
-    /* 7. CUSTOM RESULT CARDS (Original structure, themed styling) */
+    /* 7. CUSTOM RESULT CARDS (Original Structure, New Professional Styles) */
     .result-card {
-        background-color: #111111; /* Darker than surface */
-        border: 1px solid var(--primary-dark);
-        border-left: 8px solid var(--emotion-color, var(--primary-color)); 
-        border-radius: 5px;
+        background-color: #1e1e2f; /* Matches background */
+        border: 1px solid #3c3c54;
+        border-left: 5px solid var(--emotion-color, var(--primary-color)); 
+        border-radius: 8px;
         padding: 15px 20px;
         margin-bottom: 20px;
-        box-shadow: 0 0 8px rgba(226, 28, 34, 0.1);
-        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
     
     .card-header-line {
@@ -168,25 +148,23 @@ st.markdown("""
     }
     
     .emotion-gif {
-        width: 50px; 
-        height: 50px;
+        width: 40px; 
+        height: 40px;
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid var(--emotion-color);
-        box-shadow: 0 0 5px var(--emotion-color);
-        filter: brightness(0.9); /* Slightly darker GIFs for theme */
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     }
 
     .result-emotion {
         display: inline-block;
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-weight: 700;
-        color: var(--text-color-light); /* White text on colored background */
+        color: var(--text-color-light); 
         background-color: var(--emotion-color);
-        padding: 5px 12px;
+        padding: 4px 10px;
         border-radius: 4px;
         text-transform: uppercase;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
     
     .result-text {
@@ -198,27 +176,25 @@ st.markdown("""
     }
 
     .result-confidence {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         font-weight: 400;
         color: var(--text-color-secondary);
-        font-family: monospace; 
+        font-family: var(--mono-font); 
     }
 
     /* 8. DIVIDER & FOOTER */
     hr {
         border: 0;
-        height: 2px;
-        background: var(--primary-color); 
+        height: 1px;
+        background: #444466; 
         margin: 2rem 0;
-        box-shadow: var(--glow-red);
     }
     .st-emotion-detector-caption {
         text-align: center;
         color: var(--text-color-secondary);
-        font-family: monospace;
+        font-family: var(--mono-font);
         font-size: 0.8rem;
         padding-top: 10px;
-        opacity: 0.7;
     }
     footer, header { visibility: hidden !important; }
 
@@ -261,19 +237,19 @@ def detect_emotions(classifier, texts):
     return results
 
 # =================================================================
-# --- APP LAYOUT (STRANGER THINGS THEME) ---
+# --- APP LAYOUT (PROFESSIONAL DARK MODE) ---
 # =================================================================
 
 # MAIN TITLE
-st.title("EMOTION DETECTOR")
-st.markdown(f'<p>ANALYSIS INTERFACE // MODEL: {MODEL_NAME.split("/")[-1]}</p>', unsafe_allow_html=True)
+st.title("Sentiment & Emotion Analysis Tool 🤖")
+st.markdown(f'<p>Powered by Hugging Face: **{MODEL_NAME.split("/")[-1]}**</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
 # 1. INPUT BLOCK 
 with st.container():
     
-    st.subheader("1. INPUT TEXT SCRAMBLE")
+    st.subheader("1. Enter Text Samples")
     
     # --- TEXT AREA ---
     default_text = """I am so incredibly happy and proud of what we achieved today!
@@ -293,28 +269,28 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
     # Center the button
     col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
     with col_btn:
-        analyze = st.button("RUN ANALYSIS 🔦", use_container_width=True)
+        analyze = st.button("Run Sentiment Analysis", use_container_width=True)
 
 # Load the model silently
 classifier = initialize_classifier()
 
 st.markdown("---")
 
-# 2. RESULTS BLOCK (Original structure maintained)
+# 2. RESULTS BLOCK (Original two-column card structure maintained)
 if analyze:
     if texts:
         results_container = st.container()
         with results_container:
-            st.subheader("2. UPSIDE DOWN FINDINGS")
+            st.subheader("2. Analysis Results")
             
             # Use two columns to display results cards (Original UI structure)
             cols = st.columns(2)
             
-            with st.spinner("Decoding signals..."):
+            with st.spinner("Processing text..."):
                 results = detect_emotions(classifier, texts)
                 
                 if not results:
-                    st.warning("NO DATA SIGNATURES FOUND. Please enter some text.")
+                    st.warning("No valid text lines found for analysis.")
                 
                 # Display results in alternating columns
                 for i, result in enumerate(results):
@@ -344,15 +320,15 @@ if analyze:
                                 <div class="result-text">"{input_text}"</div>
                                 <div style="display: flex; align-items: center; justify-content: flex-end;">
                                     <div class="result-confidence">
-                                        TRUST LEVEL: {confidence}
+                                        CONFIDENCE: {confidence}
                                     </div>
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
                         
     else:
-        st.warning("WARNING: Text input is empty. THE LIGHTS ARE OUT.")
+        st.warning("Please enter text into the box and click 'Run Sentiment Analysis'.")
 
 # 3. FOOTER
 st.markdown("---")
-st.markdown('<p class="st-emotion-detector-caption">THE ANALYSIS CONTINUES... // BUILT BY THAYEEB</p>', unsafe_allow_html=True)
+st.markdown('<p class="st-emotion-detector-caption">Developed by THAYEEB | Data Analysis Tool</p>', unsafe_allow_html=True)
