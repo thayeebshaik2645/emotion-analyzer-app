@@ -27,7 +27,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (Clean, Light Mode Redesign) ---
+# --- CUSTOM CSS (Clean, Light Mode Redesign, preserving original result card structure) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
@@ -124,30 +124,43 @@ st.markdown("""
         box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); 
     }
     
-    /* 7. CUSTOM RESULT CARDS */
+    /* 7. CUSTOM RESULT CARDS (Original Structure, New Clean Styles) */
     .result-card {
         background-color: var(--surface-color);
+        /* Retaining original style: Left border for accent */
+        border: 1px solid #ddd;
+        border-left: 8px solid var(--emotion-color, var(--primary-light)); 
         border-radius: 10px;
-        padding: 15px;
-        margin-bottom: 15px;
-        border: 1px solid var(--emotion-color, #dddddd); 
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
     }
     
-    .card-row-1 {
+    .card-header-line {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
     }
     
-    .emotion-label {
+    .emotion-gif {
+        width: 50px; 
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--emotion-color);
+        /* Removed neon glow */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .result-emotion {
         display: inline-block;
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-weight: 700;
         color: #ffffff;
         background-color: var(--emotion-color);
-        padding: 4px 10px;
+        padding: 5px 12px;
         border-radius: 4px;
         text-transform: uppercase;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -155,45 +168,24 @@ st.markdown("""
     
     .result-text {
         color: var(--text-color-dark);
+        font-family: var(--main-font); 
         font-size: 1rem;
-        padding: 5px 0;
-        border-left: 3px solid var(--emotion-color);
-        padding-left: 10px;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         font-style: italic;
     }
 
     .result-confidence {
-        font-size: 0.8rem;
-        font-weight: 400;
+        font-size: 0.9rem;
+        font-weight: 600;
         color: var(--text-color-secondary);
-        text-align: right;
-    }
-    
-    .emotion-gif-col {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 10px;
-        background-color: var(--surface-color);
-        border-radius: 10px;
-        border: 1px dashed var(--emotion-color);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-    
-    .emotion-gif {
-        width: 80px; 
-        height: 80px;
-        border-radius: 5px;
-        object-fit: cover;
-        border: 1px solid #ddd;
+        font-family: var(--main-font); 
     }
 
     /* 8. DIVIDER & FOOTER */
     hr {
         border: 0;
         height: 1px;
-        background: #eeeeee; 
+        background: #e0e0e0; 
         margin: 2rem 0;
     }
     .st-emotion-detector-caption {
@@ -208,7 +200,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- MODEL LOADING ---
+# --- MODEL LOADING (Functionality unchanged) ---
 @st.cache_resource
 def initialize_classifier():
     """Load and cache the transformer model silently."""
@@ -227,7 +219,6 @@ def detect_emotions(classifier, texts):
     if not texts:
         return []
 
-    # Filter out empty/whitespace-only strings before sending to model
     valid_texts = [t for t in texts if t]
     if not valid_texts:
          return []
@@ -245,7 +236,7 @@ def detect_emotions(classifier, texts):
     return results
 
 # =================================================================
-# --- APP LAYOUT (REVISED: CLEAN LIGHT MODE) ---
+# --- APP LAYOUT (REVISED: CLEAN LIGHT MODE, Original Result UI) ---
 # =================================================================
 
 # MAIN TITLE
@@ -264,7 +255,6 @@ with st.container():
 This is confusing; I need someone to clarify the instructions for step three.
 My heart is racing, I'm genuinely terrified of what might happen next."""
     
-    # Use a single, wide column for input
     input_text = st.text_area(
         "Enter sentences separated by new lines:", 
         value=default_text,
@@ -273,7 +263,6 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
         label_visibility="collapsed"
     )
     
-    # Pre-process texts 
     texts = [t.strip() for t in input_text.split("\n") if t.strip()]
     
     # Center the button
@@ -286,12 +275,15 @@ classifier = initialize_classifier()
 
 st.markdown("---")
 
-# 2. RESULTS BLOCK 
+# 2. RESULTS BLOCK (Restored to original alternating column display)
 if analyze:
     if texts:
         results_container = st.container()
         with results_container:
             st.subheader("2. Analysis Results")
+            
+            # Use two columns to display results cards (Original UI structure)
+            cols = st.columns(2)
             
             with st.spinner("Analyzing text..."):
                 results = detect_emotions(classifier, texts)
@@ -299,8 +291,8 @@ if analyze:
                 if not results:
                     st.warning("No valid text lines found for analysis.")
                 
-                # Display results with a fixed layout: Text card on left, GIF on right
-                for result in results:
+                # Display results in alternating columns
+                for i, result in enumerate(results):
                     emotion = result['Dominant Emotion']
                     confidence = result['Confidence']
                     input_text = result['Input Text']
@@ -316,28 +308,20 @@ if analyze:
                     elif emotion in ["FEAR", "SURPRISE"]: css_class = "emotion-fear"
                     elif emotion == "NEUTRAL": css_class = "emotion-neutral"
                     
-                    
-                    # Use two columns for the card and the GIF
-                    col_card, col_gif = st.columns([4, 1])
-                    
-                    # --- Result Card (Left Column) ---
-                    with col_card:
+                    # Display card in the current column (i % 2 gives 0 or 1)
+                    with cols[i % 2]: 
                         st.markdown(f"""
                             <div class="result-card {css_class}">
-                                <div class="card-row-1">
-                                    <span class="emotion-label">{emotion}</span>
-                                    <div class="result-confidence">Confidence: {confidence}</div>
+                                <div class="card-header-line">
+                                    <span class="result-emotion">{emotion}</span>
+                                    <img src="{gif_url}" class="emotion-gif" alt="{emotion} GIF">
                                 </div>
                                 <div class="result-text">"{input_text}"</div>
-                            </div>
-                        """, unsafe_allow_html=True)
-                        
-                    # --- GIF Display (Right Column) ---
-                    with col_gif: 
-                        # Use markdown for the GIF display to apply custom styling
-                        st.markdown(f"""
-                            <div class="emotion-gif-col {css_class}">
-                                <img src="{gif_url}" class="emotion-gif" alt="{emotion} GIF">
+                                <div style="display: flex; align-items: center; justify-content: flex-end;">
+                                    <div class="result-confidence">
+                                        CONFIDENCE: {confidence}
+                                    </div>
+                                </div>
                             </div>
                         """, unsafe_allow_html=True)
                         
