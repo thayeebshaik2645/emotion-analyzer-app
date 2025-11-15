@@ -5,19 +5,8 @@ from transformers import pipeline
 # --- Configuration ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
-# Placeholder GIF/Image URLs (Using placehold.co to represent dynamic content)
-# In a real app, this would be populated by a Giphy/Tenor API call based on the detected emotion.
-IMAGE_MAP = {
-    'JOY': "https://placehold.co/150x150/5cb85c/ffffff?text=JOY+%28GIF+Placeholder%29",      # Green for happiness
-    'SADNESS': "https://placehold.co/150x150/337ab7/ffffff?text=SADNESS+%28GIF+Placeholder%29",  # Blue for sadness
-    'ANGER': "https://placehold.co/150x150/d9534f/ffffff?text=ANGER+%28GIF+Placeholder%29",      # Red for anger
-    'FEAR': "https://placehold.co/150x150/f0ad4e/ffffff?text=FEAR+%28GIF+Placeholder%29",        # Yellow/Orange for fear
-    'SURPRISE': "https://placehold.co/150x150/5bc0de/ffffff?text=SURPRISE+%28GIF+Placeholder%29",# Light Blue for surprise
-    'LOVE': "https://placehold.co/150x150/8a39a0/ffffff?text=LOVE+%28GIF+Placeholder%29",        # Purple for love
-    'DEFAULT': "https://placehold.co/150x150/cccccc/000000?text=Unknown+Emotion"
-}
-
-# --- Model Initialization and Caching ---
+# Use Streamlit's caching to load the model only once
+# This is crucial for performance in a web app
 @st.cache_resource
 def initialize_classifier():
     """Initializes the Hugging Face emotion classification pipeline and caches it."""
@@ -32,58 +21,45 @@ def initialize_classifier():
         st.success("Model loaded successfully!")
         return classifier
     except Exception as e:
+        # In a real environment, this error would be more descriptive
         st.error(f"Error loading the model: {e}")
         st.warning("Please check your internet connection and library installations (`pip install transformers torch`).")
-        st.stop()
+        # st.stop() # Uncomment in a live app environment if necessary
         return None
 
 def detect_emotions(classifier, texts):
     """Analyzes a list of texts and returns the results for Streamlit."""
-    if not texts:
+    if not texts or classifier is None:
         return []
 
     # Process texts using the pipeline
     predictions = classifier(texts)
     results = []
 
-    # Track the overall dominant emotion across all sentences to display one main GIF
-    overall_emotions = {}
-    
     for text, prediction_list in zip(texts, predictions):
         # Find the highest scoring emotion
         best_prediction = max(prediction_list, key=lambda x: x['score'])
-        dominant_label = best_prediction['label'].upper()
-        
-        # Count the occurrences of each emotion
-        overall_emotions[dominant_label] = overall_emotions.get(dominant_label, 0) + 1
 
         # Prepare the output row for a DataFrame
         results.append({
             'Input Text': text,
-            'Dominant Emotion': dominant_label,
+            'Dominant Emotion': best_prediction['label'].upper(),
             'Confidence Score': f"{best_prediction['score']:.4f}"
         })
 
-    # Determine the most frequently occurring emotion for the main GIF
-    if overall_emotions:
-        most_frequent_emotion = max(overall_emotions, key=overall_emotions.get)
-        main_image_url = IMAGE_MAP.get(most_frequent_emotion, IMAGE_MAP['DEFAULT'])
-    else:
-        main_image_url = IMAGE_MAP['DEFAULT']
-        
-    return results, main_image_url
+    return results
 
 # --- Streamlit Application Layout ---
 
 # 1. Page Configuration and Title
 st.set_page_config(
-    page_title="Text Emotion Detector with Visuals",
+    page_title="Text Emotion Detector",
     layout="wide"
 )
 
 st.title("🧠 Transformer-Based Text Emotion Analyzer")
 st.markdown(f"""
-This tool uses the pre-trained Hugging Face model **`{MODEL_NAME}`** to classify emotions in text.
+This tool uses the pre-trained Hugging Face model **`{MODEL_NAME}`** to classify emotions in text, including *anger*, *disgust*, *fear*, *joy*, *neutral*, *sadness*, and *surprise*.
 """)
 
 # 2. Model Initialization (called once and cached)
@@ -113,51 +89,44 @@ analyze_button = st.button("Analyze Emotions", type="primary")
 
 # 5. Analysis Logic and Results Display
 if analyze_button:
-    if input_texts:
-        st.subheader("2. Analysis Results and Visual Feedback")
-        
-        # Create columns for the results table and the GIF/Image
-        col_results, col_gif = st.columns([3, 1])
-        
+    if input_texts and classifier is not None:
+        st.subheader("2. Analysis Results")
         with st.spinner(f"Analyzing {len(input_texts)} sentence(s)..."):
             # Perform Detection
-            detection_results, main_image_url = detect_emotions(classifier, input_texts)
+            detection_results = detect_emotions(classifier, input_texts)
 
-            # Display Results in the left column (Table)
-            with col_results:
-                if detection_results:
-                    df = pd.DataFrame(detection_results)
-                    st.dataframe(
-                        df,
-                        hide_index=True,
-                        use_container_width=True,
-                        column_config={
-                            "Dominant Emotion": st.column_config.Column(
-                                "Dominant Emotion",
-                            ),
-                            # Adding progress bar for confidence for better visual representation
-                            "Confidence Score": st.column_config.ProgressColumn(
-                                "Confidence Score",
-                                format="%.4f",
-                                min_value=0,
-                                max_value=1.0,
-                            ),
-                        }
-                    )
-                else:
-                    st.warning("No valid text found to analyze.")
-
-            # Display the main GIF/Image in the right column
-            with col_gif:
-                st.markdown("##### Visual Feedback")
-                st.image(
-                    main_image_url, 
-                    caption="Most Frequent Emotion Visual", 
-                    use_column_width=True
+            # Display Results in a Streamlit DataFrame (like a nice table)
+            if detection_results:
+                df = pd.DataFrame(detection_results)
+                
+                # Simple function to map emotion to color for better visualization
+                def color_emotion(emotion):
+                    emotion_map = {
+                        'JOY': 'background-color: #d1e7dd',     # Light Green
+                        'SADNESS': 'background-color: #f8d7da', # Light Red/Pink
+                        'ANGER': 'background-color: #ffe599',   # Light Yellow/Orange
+                        'FEAR': 'background-color: #e2d1f9',    # Light Purple
+                        'SURPRISE': 'background-color: #cce5ff', # Light Blue
+                        'DISGUST': 'background-color: #f7e6a5', # Darker Yellow
+                        'NEUTRAL': 'background-color: #f0f0f0'  # Light Grey
+                    }
+                    return emotion_map.get(emotion, '')
+                
+                # Apply styling to the DataFrame
+                styled_df = df.style.applymap(
+                    color_emotion, 
+                    subset=['Dominant Emotion']
                 )
-                st.caption("*(This URL is a placeholder simulating a GIF based on the most common emotion detected.)*")
 
-
+                st.dataframe(
+                    styled_df,
+                    hide_index=True,
+                    use_container_width=True
+                )
+            else:
+                st.warning("No valid text found to analyze or model failed to load.")
+    elif classifier is None:
+        st.error("Cannot analyze: The model failed to load. Please restart the application.")
     else:
         st.warning("Please enter some text to analyze before clicking the button.")
 
