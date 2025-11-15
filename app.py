@@ -1,12 +1,13 @@
 import streamlit as st
 from transformers import pipeline
 
-# --- CONFIGURATION ---
+
+# ------------------------------
+# CONFIG
+# ------------------------------
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 PAGE_ICON_URL = "https://cdn-icons-png.flaticon.com/128/10479/10479785.png"
 
-
-# --- EMOTION GIF MAPPING ---
 EMOTION_GIFS = {
     "ANGER": "https://media0.giphy.com/media/jsNiI5nMGQurggwpkN/giphy.webp",
     "HAPPINESS": "https://media4.giphy.com/media/USR9bpLz899PYVHk7C/giphy.webp",
@@ -15,238 +16,261 @@ EMOTION_GIFS = {
     "FEAR": "https://media0.giphy.com/media/Gl7mfimOjkkGl5mMDS/giphy.webp",
     "NEUTRAL": "https://media3.giphy.com/media/7CXIO53h5YciXOp505/giphy.webp",
     "DISGUST": "https://media0.giphy.com/media/jsNiI5nMGQurggwpkN/giphy.webp",
-    "EXCITEMENT": "https://media0.giphy.com/media/LN5bH1r7UEpSRbcN7M/giphy.webp",
-    "LONELINESS": "https://media0.giphy.com/media/StAnQV9TUCuys/giphy.webp",
     "SURPRISE": "https://media0.giphy.com/media/Gl7mfimOjkkGl5mMDS/giphy.webp",
 }
 
 
-# --- PAGE SETUP ---
+# ------------------------------
+# PAGE SETTINGS
+# ------------------------------
 st.set_page_config(
-    page_title="STRANGER THINGS ANALYZER",
+    page_title="Stranger Things Analyzer",
     page_icon=PAGE_ICON_URL,
-    layout="wide",
+    layout="wide"
 )
 
 
-# ===========================
-#     STRANGER THINGS CSS
-# ===========================
+# ------------------------------
+# FULL STRANGER THINGS UI THEME 
+# ------------------------------
 
 st.markdown("""
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Roboto+Mono:wght@300;400;700&display=swap');
-
-:root {
-    --st-red: #e50914;
-    --st-red-glow: #ff1d2d;
-    --st-bg-dark: #000000;
-    --text-light: #e3e3e3;
-}
-
-/* Background */
+/* MAIN BACKGROUND */
 .main {
-    background: radial-gradient(circle at top, #1b0006 0%, #000000 70%);
-    color: var(--text-light);
-    font-family: 'Roboto Mono', monospace;
+    background: #000;
 }
 
-/* Fog layer */
-.main::before {
+/* Fullscreen Upside-Down Atmosphere */
+body {
+    background-image: url('https://i.imgur.com/zY8z1DP.jpeg');
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+/* Fog Layer */
+body::before {
     content: "";
     position: fixed;
     inset: 0;
-    pointer-events: none;
     background: url("https://i.imgur.com/8fK4hFf.png");
-    opacity: 0.08;
-    animation: drift 60s linear infinite;
+    opacity: 0.07;
+    pointer-events: none;
+    animation: fogMove 80s infinite linear;
 }
 
-@keyframes drift {
+@keyframes fogMove {
     from { transform: translateX(0); }
-    to   { transform: translateX(20%); }
+    to { transform: translateX(20%); }
+}
+
+/* Floating Spores */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: url("https://i.imgur.com/7NkZyHf.png");
+    background-size: cover;
+    opacity: 0.18;
+    pointer-events: none;
+    animation: sporesFloat 12s infinite ease-in-out alternate;
+}
+
+@keyframes sporesFloat {
+    from { opacity: 0.1; transform: translateY(0); }
+    to { opacity: 0.22; transform: translateY(-30px); }
+}
+
+/* VHS Scanline Effect */
+.scanlines {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,0,0,0.05) 0px,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0) 4px
+    );
+    mix-blend-mode: screen;
+    pointer-events:none;
+    opacity:0.25;
 }
 
 /* Title */
 h1 {
     font-family: 'Cinzel', serif;
-    color: var(--st-red);
-    font-size: 4rem;
-    font-weight: 900;
-    text-shadow: 0 0 20px var(--st-red-glow), 0 0 40px var(--st-red-glow);
-    letter-spacing: 4px;
+    font-size: 4.6rem;
+    text-align:center;
+    margin-top:30px;
+    color:#e50914;
+    text-shadow: 
+        0 0 20px #ff1d2d,
+        0 0 40px #ff1d2d,
+        0 0 80px #700000;
+    letter-spacing: 6px;
 }
 
 /* Subtitle */
-h3 {
-    font-family: 'Cinzel', serif;
-    color: var(--st-red);
-    text-shadow: 0 0 10px var(--st-red-glow);
+.subtext {
+    text-align:center;
+    color:#ccc;
+    font-family: 'Roboto Mono', monospace;
+    font-size:1.1rem;
+    letter-spacing:3px;
+    margin-top:-15px;
+    margin-bottom:40px;
 }
 
-/* Text area */
-textarea {
-    background: #0d0d0d !important;
-    color: var(--text-light) !important;
-    border: 2px solid var(--st-red) !important;
-    box-shadow: 0 0 10px var(--st-red-glow);
+/* Input Panel */
+.stTextArea textarea {
+    background:#0a0a0a !important;
+    color:white !important;
+    border: 2px solid #e50914 !important;
+    box-shadow:0 0 25px red;
+    border-radius:10px;
+    font-family:'Roboto Mono', monospace !important;
+    font-size:1rem !important;
 }
 
-/* Buttons */
+/* Button */
 div.stButton > button {
-    background: var(--st-red);
-    border: none;
-    color: white;
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    padding: 0.7em 1.7em;
-    letter-spacing: 2px;
-    box-shadow: 0 0 20px var(--st-red-glow);
-    transition: 0.2s;
+    background:#e50914;
+    color:white;
+    font-size:1.3rem;
+    padding:12px 20px;
+    border:none;
+    border-radius:6px;
+    font-family:'Cinzel', serif;
+    letter-spacing:3px;
+    width:100%;
+    box-shadow:0 0 25px #ff1d2d;
+    transition:0.2s;
 }
 
 div.stButton > button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 35px var(--st-red-glow);
+    transform:scale(1.05);
+    box-shadow:0 0 40px #ff1d2d;
 }
 
-/* Result container */
+/* Result Card */
 .result-card {
-    background: rgba(15, 0, 0, 0.75);
-    border-left: 5px solid var(--st-red);
-    padding: 16px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    box-shadow: 0 0 25px rgba(255,0,0,0.4), inset 0 0 10px rgba(255,0,0,0.2);
-    backdrop-filter: blur(3px);
+    background:rgba(0,0,0,0.7);
+    padding:20px;
+    margin-bottom:25px;
+    border-radius:10px;
+    border-left:5px solid #e50914;
+    box-shadow:
+        0 0 20px rgba(255,0,0,0.5),
+        inset 0 0 20px rgba(255,0,0,0.2);
+    backdrop-filter: blur(4px);
 }
 
 /* Emotion Label */
 .result-emotion {
-    background: var(--st-red);
-    padding: 5px 12px;
-    border-radius: 4px;
-    color: white;
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    text-shadow: 0 0 10px var(--st-red-glow);
+    color:white;
+    font-family:'Cinzel', serif;
+    font-size:1.1rem;
+    padding:5px 12px;
+    background:#e50914;
+    border-radius:4px;
+    text-shadow:0 0 10px red;
 }
 
 /* GIF bubble */
 .emotion-gif {
-    width: 48px;
-    height: 48px;
-    border: 3px solid var(--st-red);
-    border-radius: 50%;
-    box-shadow: 0 0 12px var(--st-red-glow);
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    border:3px solid #e50914;
+    box-shadow:0 0 12px red;
 }
 
-footer, header { visibility: hidden; }
-
 </style>
+
+<div class="scanlines"></div>
 """, unsafe_allow_html=True)
 
 
-# ======================================
-#       MODEL LOADING
-# ======================================
-
+# ------------------------------
+# LOAD MODEL
+# ------------------------------
 @st.cache_resource
-def initialize_classifier():
+def load_model():
     return pipeline(
         "text-classification",
         model=MODEL_NAME,
         return_all_scores=True
     )
 
-classifier = initialize_classifier()
+classifier = load_model()
 
 
-def detect_emotions(classifier, texts):
+# ------------------------------
+# TITLE
+# ------------------------------
+st.markdown("<h1>STRANGER THINGS ANALYZER</h1>", unsafe_allow_html=True)
+st.markdown("<p class='subtext'>Emotion Detection From The Upside-Down</p>", unsafe_allow_html=True)
+
+
+# ------------------------------
+# INPUT
+# ------------------------------
+input_text = st.text_area(
+    "",
+    "Something feels wrong... I can sense it breathing in the dark.",
+    height=180
+)
+
+run = st.button("ENTER THE UPSIDE DOWN")
+
+
+# ------------------------------
+# EMOTION FUNCTION
+# ------------------------------
+def detect_emotions(texts):
     predictions = classifier(texts)
     results = []
-    for text, prediction_list in zip(texts, predictions):
-        best = max(prediction_list, key=lambda x: x["score"])
+    for text, p_list in zip(texts, predictions):
+        top = max(p_list, key=lambda x: x["score"])
         results.append({
-            "Input Text": text,
-            "Dominant Emotion": best["label"].upper(),
-            "Confidence": f"{best['score']:.4f}",
+            "text": text,
+            "emotion": top["label"].upper(),
+            "score": round(top["score"], 4)
         })
     return results
 
 
-# ======================================
-#            STRANGER THINGS UI
-# ======================================
+# ------------------------------
+# OUTPUT
+# ------------------------------
+if run:
+    lines = [x.strip() for x in input_text.split("\n") if x.strip()]
+    results = detect_emotions(lines)
 
-st.markdown("""
-<div style='text-align:center; padding-top:20px;'>
-    <h1>STRANGER THINGS ANALYZER</h1>
-    <p style="
-        color:#bbb; 
-        font-family:Roboto Mono;
-        letter-spacing:2px;
-        text-shadow:0 0 10px red;
-    ">
-        Emotion Detection From The Upside-Down
-    </p>
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("<hr style='border:1px solid #700000;'>", unsafe_allow_html=True)
-
-
-# Input block
-st.markdown("""
-<h3>ENTER YOUR MESSAGE</h3>
-""", unsafe_allow_html=True)
-
-col_l, col_mid, col_r = st.columns([1, 2, 1])
-
-with col_mid:
-    input_text_raw = st.text_area(
-        "",
-        "Something feels wrong… deeply wrong.\nMy heart is racing for no reason.",
-        height=180
-    )
-
-    run = st.button("🔻 ANALYZE EMOTION 🔻", use_container_width=True)
-
-texts = [t.strip() for t in input_text_raw.split("\n") if t.strip()]
-
-
-# Display results
-if run and texts:
-
-    results = detect_emotions(classifier, texts)
-
-    st.markdown("""
-    <h3 style='margin-top:40px;'>UPSIDE-DOWN RESULTS</h3>
-    """, unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#e50914; margin-top:40px;'>UPSIDE-DOWN RESULTS</h3>", unsafe_allow_html=True)
 
     cols = st.columns(2)
 
-    for i, result in enumerate(results):
-        emotion = result["Dominant Emotion"]
-        confidence = result["Confidence"]
-        user_input = result["Input Text"]
+    for i, res in enumerate(results):
+        emotion = res["emotion"]
         gif = EMOTION_GIFS.get(emotion, EMOTION_GIFS["NEUTRAL"])
 
         with cols[i % 2]:
             st.markdown(f"""
             <div class="result-card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+
+                <div style="display:flex; justify-content:space-between;">
                     <span class="result-emotion">{emotion}</span>
-                    <img src="{gif}" class="emotion-gif">
+                    <img class="emotion-gif" src="{gif}">
                 </div>
 
-                <div style="color:#ccc; margin-top:12px; font-style:italic;">
-                    "{user_input}"
+                <div style="color:#ccc; margin-top:14px; font-style:italic;">
+                    "{res['text']}"
                 </div>
 
-                <div style="margin-top:10px; color:#aaa; text-align:right;">
-                    CONFIDENCE: {confidence}
+                <div style="color:#aaa; text-align:right; margin-top:10px;">
+                    CONFIDENCE: {res['score']}
                 </div>
             </div>
             """, unsafe_allow_html=True)
