@@ -30,175 +30,163 @@ st.set_page_config(
 # --- CUSTOM CSS (Professional Dark Mode) ---
 st.markdown("""
     <style>
-    /* ---------------------------------------------------- */
-    /* 1. FONT IMPORTS */
-    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;900&family=Roboto+Mono:wght@400;600&display=swap');
-    
-    /* 2. COLOR PALETTE DEFINITION (PROFESSIONAL DARK MODE) */
-    :root {
-        --primary-color: #007bff; /* Vibrant Blue Accent */
-        --primary-light: #52a8ff; 
-        --background-dark: #1e1e2f; /* Deep Navy Background */
-        --surface-color: #2b2b40; /* Slightly lighter Card Surface */
-        --text-color-light: #e0e0e0; 
-        --text-color-secondary: #aaaaaa; 
-        
-        --main-font: 'Source Sans 3', sans-serif; 
-        --mono-font: 'Roboto Mono', monospace; 
-    }
-    
-    /* --- EMOTION SPECIFIC COLOR MAP (Color-Coded, but less aggressive) --- */
-    .emotion-anger, .emotion-disgust { --emotion-color: #dc3545; } /* Red */
-    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #28a745; } /* Green */
-    .emotion-sadness, .emotion-loneliness { --emotion-color: #007bff; } /* Blue (Matches primary) */
-    .emotion-fear, .emotion-surprise { --emotion-color: #ffc107; } /* Yellow/Orange */
-    .emotion-neutral { --emotion-color: #6c757d; } /* Gray */
 
-    
-    /* 3. OVERALL LAYOUT & BACKGROUND */
-    .main {
-        background: var(--background-dark);
-        padding: 3rem 4rem; 
-        font-family: var(--main-font); 
-        color: var(--text-color-light); 
-    }
-    .stApp .st-emotion-cache-1pxn4ip, .stApp .st-emotion-cache-1v0pmnt {
-        background-color: var(--surface-color);
-        border-radius: 8px;
-        padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); 
-    }
+/* ---------------------------------------------- */
+/* STRANGER THINGS RETRO UPSIDE-DOWN THEME        */
+/* ---------------------------------------------- */
 
-    /* 4. TITLES & TEXT EFFECTS */
-    h1 {
-        color: var(--primary-color);
-        font-weight: 900;
-        font-family: var(--main-font);
-        text-align: center;
-        letter-spacing: 1px;
-        margin-bottom: 0.5rem;
-    }
-    
-    /* --- SECTION SUBHEADER (h3) --- */
-    h3 {
-        color: var(--text-color-light);
-        font-family: var(--main-font); 
-        font-weight: 700; 
-        border-bottom: 2px solid var(--primary-color);
-        padding-bottom: 5px;
-        margin-top: 2rem;
-        margin-bottom: 1.5rem;
-        font-size: 1.5rem;
-    }
-    /* Subtitle/model name */
-    p[data-testid="stMarkdownContainer"] {
-        color: var(--text-color-secondary) !important;
-        text-align: center;
-        font-family: var(--mono-font);
-    }
+/* Import retro fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Roboto+Mono:wght@300;400;700&display=swap');
 
-    /* 5. TEXT AREA EFFECTS */
-    textarea {
-        border-radius: 8px !important;
-        border: 1px solid var(--primary-color) !important;
-        background-color: #121220 !important; /* Very dark input field */
-        color: var(--text-color-light) !important;
-        font-size: 16px !important; 
-        font-family: var(--mono-font) !important; 
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.2); 
-    }
+/* Color palette */
+:root {
+    --st-red: #e50914;
+    --st-red-glow: #ff1d2d;
+    --st-black: #0a0a0a;
+    --st-dark: #111;
+    --st-smoke: rgba(255, 0, 0, 0.15);
+    --text-light: #e3e3e3;
+}
 
-    /* 6. BUTTON EFFECTS */
-    div.stButton > button:first-child {
-        background: var(--primary-color);
-        color: white;
-        font-weight: 700;
-        font-family: var(--main-font);
-        border-radius: 8px;
-        padding: 0.6em 1.5em;
-        box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3); 
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.2s ease;
-        border: none;
-    }
-    div.stButton > button:first-child:hover {
-        transform: translateY(-2px); 
-        background: var(--primary-light); 
-        box-shadow: 0 6px 15px rgba(0, 123, 255, 0.5); 
-    }
-    
-    /* 7. CUSTOM RESULT CARDS (Original Structure, New Professional Styles) */
-    .result-card {
-        background-color: #1e1e2f; /* Matches background */
-        border: 1px solid #3c3c54;
-        border-left: 5px solid var(--emotion-color, var(--primary-color)); 
-        border-radius: 8px;
-        padding: 15px 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-    
-    .card-header-line {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-    
-    .emotion-gif {
-        width: 40px; 
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid var(--emotion-color);
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    }
+/* Whole app background */
+.main {
+    background: radial-gradient(circle at top, #1b0006 0%, #000000 70%);
+    background-attachment: fixed;
+    color: var(--text-light);
+    font-family: 'Roboto Mono', monospace;
+    text-shadow: 0px 0px 6px rgba(255,10,25,0.4);
+}
 
-    .result-emotion {
-        display: inline-block;
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: var(--text-color-light); 
-        background-color: var(--emotion-color);
-        padding: 4px 10px;
-        border-radius: 4px;
-        text-transform: uppercase;
-    }
-    
-    .result-text {
-        color: var(--text-color-light);
-        font-family: var(--main-font); 
-        font-size: 1rem;
-        margin-bottom: 10px;
-        font-style: italic;
-    }
+/* Fog/Smoke Effect */
+.main::before {
+    content: "";
+    position: fixed;
+    left: 0; top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: url("https://i.imgur.com/8fK4hFf.png");
+    opacity: 0.09;
+    mix-blend-mode: screen;
+    animation: drift 60s infinite linear;
+}
 
-    .result-confidence {
-        font-size: 0.8rem;
-        font-weight: 400;
-        color: var(--text-color-secondary);
-        font-family: var(--mono-font); 
-    }
+@keyframes drift {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(20%); }
+}
 
-    /* 8. DIVIDER & FOOTER */
-    hr {
-        border: 0;
-        height: 1px;
-        background: #444466; 
-        margin: 2rem 0;
-    }
-    .st-emotion-detector-caption {
-        text-align: center;
-        color: var(--text-color-secondary);
-        font-family: var(--mono-font);
-        font-size: 0.8rem;
-        padding-top: 10px;
-    }
-    footer, header { visibility: hidden !important; }
+/* Titles – Stranger Things neon red */
+h1 {
+    font-family: 'Cinzel', serif;
+    color: var(--st-red);
+    font-size: 3rem;
+    font-weight: 900;
+    text-align: center;
+    text-shadow: 
+        0 0 10px var(--st-red-glow),
+        0 0 20px var(--st-red-glow),
+        0 0 40px var(--st-red-glow);
+    letter-spacing: 3px;
+}
 
-    </style>
+/* Subtitles */
+h3 {
+    color: var(--st-red);
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    border-bottom: 2px solid var(--st-red);
+    padding-bottom: 5px;
+    margin-top: 2rem;
+}
+
+/* Text area */
+textarea {
+    background: #0d0d0d !important;
+    color: var(--text-light) !important;
+    border: 2px solid var(--st-red) !important;
+    font-family: 'Roboto Mono', monospace !important;
+    box-shadow: 0 0 10px var(--st-red-glow);
+}
+
+/* Buttons */
+div.stButton > button:first-child {
+    background: var(--st-red);
+    border: none;
+    color: white;
+    font-weight: 700;
+    padding: 0.7em 1.7em;
+    border-radius: 5px;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 2px;
+    box-shadow: 0 0 15px var(--st-red-glow);
+    transition: 0.2s ease-in-out;
+}
+
+div.stButton > button:first-child:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px var(--st-red-glow);
+}
+
+/* Result Cards — Upside-Down look */
+.result-card {
+    background: rgba(10, 0, 0, 0.85);
+    border: 2px solid var(--st-red);
+    border-left: 5px solid var(--st-red);
+    padding: 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    box-shadow: 
+        0 0 10px rgba(255, 0, 0, 0.5),
+        inset 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+/* Emotion badge */
+.result-emotion {
+    background: var(--st-red);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 900;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 1px;
+    box-shadow: 0 0 10px var(--st-red-glow);
+}
+
+/* GIF circle */
+.emotion-gif {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 3px solid var(--st-red);
+    box-shadow: 0 0 10px var(--st-red-glow);
+}
+
+/* Input text in cards */
+.result-text {
+    font-style: italic;
+    color: #ccc;
+    margin: 8px 0;
+}
+
+/* Confidence meter label */
+.result-confidence {
+    color: #999;
+    font-size: 0.8rem;
+    font-family: 'Roboto Mono', monospace;
+}
+
+/* Footer */
+.st-emotion-detector-caption {
+    text-align: center;
+    color: #666;
+    margin-top: 10px;
+}
+
+footer, header { visibility: hidden; }
+
+</style>
+
 """, unsafe_allow_html=True)
 
 # --- MODEL LOADING (Functionality unchanged) ---
@@ -332,3 +320,4 @@ if analyze:
 # 3. FOOTER
 st.markdown("---")
 st.markdown('<p class="st-emotion-detector-caption">Developed by THAYEEB | Data Analysis Tool</p>', unsafe_allow_html=True)
+
