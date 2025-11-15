@@ -1,9 +1,11 @@
 import streamlit as st
+import pandas as pd
 from transformers import pipeline
 
 # --- CONFIGURATION ---
 MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 PAGE_ICON_URL = "https://cdn-icons-png.flaticon.com/128/10479/10479785.png"
+ALL_EMOTIONS = ["ANGER", "HAPPINESS", "SADNESS", "JOY", "FEAR", "NEUTRAL", "DISGUST", "EXCITEMENT", "LONELINESS", "SURPRISE"]
 
 # --- EMOTION GIF MAPPING (UNMODIFIED) ---
 EMOTION_GIFS = {
@@ -28,12 +30,12 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (Stranger Things Theme) ---
+# --- CUSTOM CSS (Stranger Things Theme with Flicker and Bar Styles) ---
+# Paste the full enhanced CSS block here
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
     /* 1. FONT IMPORTS (Stranger Things 'ITC Benguiat' Lookalikes) */
-    /* Cinzel for Serif Title look and VCR OSD Mono for 8-bit/Screen text */
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=VCR+OSD+Mono&display=swap');
     
@@ -46,25 +48,26 @@ st.markdown("""
         --text-color-light: #f0f0f0;   /* White/Light Gray */
         --text-color-secondary: #0000cc; /* Deep Blue Accent (The Upside Down) */
         
-        --main-font: 'VCR OSD Mono', monospace; /* Console/Screen text */
-        --header-font: 'Cinzel', serif;        /* Title Font */
+        --main-font: 'VCR OSD Mono', monospace; 
+        --header-font: 'Cinzel', serif;        
     }
     
-    /* --- EMOTION SPECIFIC COLOR MAP (Subtle Red/Blue Shift) --- */
-    .emotion-anger, .emotion-disgust { --emotion-color: #ff4444; } /* Lighter Red */
-    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #ffdd00; } /* Yellow/Gold for warmth */
-    .emotion-sadness, .emotion-loneliness { --emotion-color: #008cff; } /* Light Blue */
-    .emotion-fear, .emotion-surprise { --emotion-color: #ff00ff; } /* Magenta/Purple */
+    /* --- EMOTION SPECIFIC COLOR MAP --- */
+    .emotion-anger, .emotion-disgust { --emotion-color: #ff4444; } 
+    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #ffdd00; } 
+    .emotion-sadness, .emotion-loneliness { --emotion-color: #008cff; } 
+    .emotion-fear, .emotion-surprise { --emotion-color: #ff00ff; } 
     .emotion-neutral { --emotion-color: var(--primary-color); }
     
-    /* 3. OVERALL LAYOUT & BACKGROUND */
+    /* 3. OVERALL LAYOUT & BACKGROUND + SCANLINE/FLICKER */
     .main {
         background: var(--background-dark);
         padding: 2.5rem 4rem; 
         font-family: var(--main-font); 
         color: var(--text-color-light); 
-        /* CRT/Scanline Effect overlay */
         position: relative;
+        /* Overall Flicker Animation */
+        animation: flicker 2s infinite alternate;
     }
     .main::before {
         content: '';
@@ -83,12 +86,23 @@ st.markdown("""
         pointer-events: none;
         z-index: 1000;
     }
+    
+    /* Flicker Keyframes */
+    @keyframes flicker {
+        0% { opacity: 1; }
+        20% { opacity: 0.98; }
+        40% { opacity: 1; }
+        60% { opacity: 0.99; }
+        80% { opacity: 1; }
+        100% { opacity: 0.97; }
+    }
+
     .stApp .st-emotion-cache-1pxn4ip, .stApp .st-emotion-cache-1v0pmnt {
         background-color: var(--surface-color);
         border-radius: 2px;
         padding: 20px;
         margin-bottom: 20px;
-        box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); /* Subtle red glow around elements */
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); 
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
@@ -98,11 +112,9 @@ st.markdown("""
         font-family: var(--header-font);
         font-weight: 900;
         text-align: center;
-        letter-spacing: 0.15em; /* Wide letter spacing */
+        letter-spacing: 0.15em; 
         font-size: 4em;
         line-height: 1.2;
-        
-        /* Stranger Things Glow Effect (Red on Black) */
         text-shadow: 
             0 0 10px var(--primary-color),
             0 0 20px var(--primary-dark),
@@ -113,37 +125,36 @@ st.markdown("""
     h3 {
         color: var(--text-color-light);
         font-family: var(--main-font); 
-        font-weight: 400; 
         padding-left: 10px; 
         border: none;
         margin-top: 2rem;
         margin-bottom: 1rem;
         font-size: 1.4em;
-        text-shadow: 0 0 5px var(--primary-color); /* Subtle screen glow */
+        text-shadow: 0 0 5px var(--primary-color); 
     }
     
     /* 5. TEXT AREA EFFECTS (Data Stream) */
     textarea {
         border-radius: 0 !important;
-        border: 2px solid var(--text-color-secondary) !important; /* Deep Blue border */
+        border: 2px solid var(--text-color-secondary) !important; 
         padding: 15px !important;
         background-color: var(--background-dark) !important;
-        color: var(--primary-color) !important; /* Red text on black */
+        color: var(--primary-color) !important; 
         font-size: 1.2rem !important; 
         font-family: var(--main-font) !important; 
         line-height: 1.6; 
-        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8), 0 0 5px var(--primary-color); /* Inner shadow for depth */
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8), 0 0 5px var(--primary-color); 
     }
     
     /* 6. BUTTON EFFECTS (Alert/Urgent) */
     div.stButton > button:first-child {
-        background: var(--primary-color); /* Red */
+        background: var(--primary-color); 
         color: var(--background-dark);
         font-family: var(--header-font);
         font-weight: 600;
         border-radius: 2px;
         padding: 0.8em 2em;
-        box-shadow: 0 0 20px var(--primary-color); /* Intense red glow */
+        box-shadow: 0 0 20px var(--primary-color); 
         text-transform: uppercase;
         letter-spacing: 3px;
         border: none;
@@ -228,9 +239,19 @@ st.markdown("""
         font-size: 1rem;
         text-shadow: 0 0 5px var(--primary-color);
     }
+    /* Style for the emotion bars */
+    .emotion-bar-container {
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        background-color: #000000;
+        box-shadow: inset 0 0 5px rgba(255, 0, 0, 0.5);
+    }
 
     </style>
 """, unsafe_allow_html=True)
+
 
 # --- MODEL LOADING ---
 @st.cache_resource
@@ -254,11 +275,17 @@ def detect_emotions(classifier, texts):
     predictions = classifier(texts)
     results = []
     for text, prediction_list in zip(texts, predictions):
+        # Prepare full scores dictionary
+        scores = {p['label'].upper(): p['score'] for p in prediction_list}
+        
+        # Get dominant emotion
         best = max(prediction_list, key=lambda x: x['score'])
+        
         results.append({
             "Input Text": text,
             "Dominant Emotion": best['label'].upper(),
-            "Confidence": f"{best['score']:.4f}"
+            "Confidence": best['score'],
+            "Full Scores": scores
         })
     return results
 
@@ -272,21 +299,35 @@ st.markdown(f'<p style="color: var(--text-color-light); text-align: center; font
 
 st.markdown("---")
 
-# 1. INPUT BLOCK
-input_container = st.container()
-with input_container:
-    
-    st.subheader("INPUT: TRANSMISSION RECEIVED >>")
-    
-    # --- TEXT AREA ---
-    col1, col_input, col2 = st.columns([1, 4, 1])
+# Use Streamlit Tabs for better segmentation
+tab_input, tab_results = st.tabs(["[1] INPUT SEQUENCE", "[2] ANALYSIS REPORT"])
 
-    default_text = """I am so incredibly happy and proud of what we achieved today!
+with tab_input:
+    # --- CONFIDENCE THRESHOLD SETTING (New Feature 1) ---
+    col_settings, col_input_area = st.columns([1, 4])
+
+    with col_settings:
+        st.subheader("SYSTEM SETTINGS")
+        # Initialize session state for analysis results
+        if 'analysis_results' not in st.session_state:
+            st.session_state['analysis_results'] = []
+            
+        confidence_threshold = st.slider(
+            "Threshold: Filter Low Confidence (Min: **0%**)",
+            min_value=0.0,
+            max_value=1.0,
+            value=0.5, # Default to 50%
+            step=0.05,
+            format="%.0f%%",
+            key="confidence_slider"
+        )
+
+    with col_input_area:
+        st.subheader("INPUT: TRANSMISSION RECEIVED >>")
+        default_text = """I am so incredibly happy and proud of what we achieved today!
 This is confusing; I need someone to clarify the instructions for step three.
 My heart is racing, I'm genuinely terrified of what might happen next."""
-    
-    with col_input:
-        # Text area without a label
+        
         input_text = st.text_area(
             "", 
             value=default_text,
@@ -297,62 +338,88 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
         
         col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
         with col_btn:
-              analyze = st.button("🔴 OPEN GATE TO EMOTIONS 🔴", use_container_width=True)
+            analyze = st.button("🔴 OPEN GATE TO EMOTIONS 🔴", use_container_width=True)
 
 # Load the model silently
 classifier = initialize_classifier()
 
-st.markdown("---")
-
-# 2. RESULTS BLOCK
-if analyze:
-    if texts:
-        results_container = st.container()
-        with results_container:
-            st.subheader("OUTPUT: THE UPSIDE DOWN ANALYSIS >>")
-            
-            # Use two columns to display results cards
-            cols = st.columns(2)
-            
+with tab_results:
+    if analyze:
+        if texts:
             with st.spinner("Processing... The lights are flickering..."):
                 results = detect_emotions(classifier, texts)
+                st.session_state['analysis_results'] = results # Store results in session state
+            
+            st.subheader("OUTPUT: THE UPSIDE DOWN ANALYSIS >>")
+
+            # Filter results based on the threshold
+            filtered_results = [
+                r for r in results 
+                if r['Confidence'] >= confidence_threshold
+            ]
+
+            if not filtered_results:
+                st.warning(f"No results meet the **{confidence_threshold*100:.0f}%** confidence threshold.")
+            
+            cols = st.columns(2)
+            
+            for i, result in enumerate(filtered_results):
+                emotion = result['Dominant Emotion']
+                confidence = result['Confidence']
+                input_text = result['Input Text']
+                full_scores = result['Full Scores']
                 
-                # Display results in alternating columns
-                for i, result in enumerate(results):
-                    emotion = result['Dominant Emotion']
-                    confidence = result['Confidence']
-                    input_text = result['Input Text']
-                    
-                    # 1. Get the GIF URL
-                    gif_url = EMOTION_GIFS.get(emotion, EMOTION_GIFS["NEUTRAL"]) 
-                    
-                    # 2. Determine CSS class for coloring
-                    css_class = ""
-                    if emotion in ["ANGER", "DISGUST"]: css_class = "emotion-anger"
-                    elif emotion in ["JOY", "HAPPINESS", "EXCITEMENT"]: css_class = "emotion-joy"
-                    elif emotion in ["SADNESS", "LONELINESS"]: css_class = "emotion-sadness"
-                    elif emotion in ["FEAR", "SURPRISE"]: css_class = "emotion-fear"
-                    elif emotion == "NEUTRAL": css_class = "emotion-neutral"
-                    
-                    # Display card in the current column (i % 2 gives 0 or 1)
-                    with cols[i % 2]: 
-                        st.markdown(f"""
-                            <div class="result-card {css_class}">
-                                <div class="card-header-line">
-                                    <span class="result-emotion">{emotion}</span>
-                                    <img src="{gif_url}" class="emotion-gif" alt="{emotion} GIF">
-                                </div>
-                                <div class="result-text">"{input_text}"</div>
-                                <div style="display: flex; align-items: center; justify-content: flex-end;">
-                                    <div class="result-confidence">
-                                        CONFIDENCE: {confidence}
-                                    </div>
+                gif_url = EMOTION_GIFS.get(emotion, EMOTION_GIFS["NEUTRAL"]) 
+                
+                css_class = ""
+                if emotion in ["ANGER", "DISGUST"]: css_class = "emotion-anger"
+                elif emotion in ["JOY", "HAPPINESS", "EXCITEMENT"]: css_class = "emotion-joy"
+                elif emotion in ["SADNESS", "LONELINESS"]: css_class = "emotion-sadness"
+                elif emotion in ["FEAR", "SURPRISE"]: css_class = "emotion-fear"
+                elif emotion == "NEUTRAL": css_class = "emotion-neutral"
+                
+                with cols[i % 2]: 
+                    st.markdown(f"""
+                        <div class="result-card {css_class}">
+                            <div class="card-header-line">
+                                <span class="result-emotion">{emotion}</span>
+                                <img src="{gif_url}" class="emotion-gif" alt="{emotion} GIF">
+                            </div>
+                            <div class="result-text">"{input_text}"</div>
+                            <div style="display: flex; align-items: center; justify-content: flex-end;">
+                                <div class="result-confidence">
+                                    CONFIDENCE LEVEL: {confidence:.4f}
                                 </div>
                             </div>
-                        """, unsafe_allow_html=True)
-                
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # --- Full Emotion Score Visualization (New Feature 2) ---
+                    # Prepare data for Bar Chart
+                    # Sort scores and convert to DataFrame for st.bar_chart
+                    df_scores = pd.DataFrame(
+                        full_scores.items(), 
+                        columns=['Emotion', 'Confidence']
+                    ).sort_values(by='Confidence', ascending=False).head(5) # Show top 5
+                    
+                    st.markdown(f'<div class="emotion-bar-container">', unsafe_allow_html=True)
+                    st.markdown(f'<p style="font-family: var(--main-font); color: var(--primary-color); font-size: 0.9rem; margin: 0 0 5px 0;">RAW SENSORY DATA (TOP 5)</p>', unsafe_allow_html=True)
+
+                    # Fix the index/label issue for Streamlit charts
+                    df_scores = df_scores.set_index('Emotion')
+                    
+                    st.bar_chart(
+                        df_scores, 
+                        use_container_width=True, 
+                        height=200,
+                        color=css_class.replace('emotion-', '#') # Simple attempt to color the bars (Streamlit 1.29+ feature)
+                    )
+                    st.markdown(f'</div>', unsafe_allow_html=True)
+
+        else:
+            st.warning("ERROR: TEXT INPUT REQUIRED. DANGER IMMINENT.")
     else:
-        st.warning("SYSTEM ALERT: TEXT INPUT REQUIRED. DANGER IMMINENT.")
+        st.info("AWAITING TRANSMISSION... CLICK 'OPEN GATE TO EMOTIONS' TO BEGIN ANALYSIS.")
 
 # 3. FOOTER
 st.markdown("---")
