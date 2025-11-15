@@ -23,37 +23,38 @@ EMOTION_GIFS = {
 
 # --- PAGE SETUP ---
 st.set_page_config(
-    page_title="👾 8-BIT EMOTION DETECTOR 👾",
+    page_title="🕯️ THE UPSIDE DOWN EMOTION DETECTOR",
     page_icon=PAGE_ICON_URL,
     layout="wide",
 )
 
-# --- CUSTOM CSS (Retro/8-bit Theme) ---
+# --- CUSTOM CSS (Stranger Things Theme) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
-    /* 1. FONT IMPORTS (Retro Fonts) */
-    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    /* 1. FONT IMPORTS (Stranger Things 'ITC Benguiat' Lookalikes) */
+    /* Cinzel for Serif Title look and VCR OSD Mono for 8-bit/Screen text */
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=VCR+OSD+Mono&display=swap');
     
-    /* 2. COLOR PALETTE DEFINITION (Retro Neon/Vaporwave) */
+    /* 2. COLOR PALETTE DEFINITION (Deep Red, Dark Blue, Black) */
     :root {
-        --primary-color: #00ffc8;      /* Neon Green/Teal */
-        --primary-dark: #008c79;       /* Darker Teal */
-        --background-dark: #222244;    /* Dark Indigo/Purple for background depth */
-        --surface-color: #333366;      /* Slightly lighter indigo for cards/boxes */
-        --text-color-light: #ffffff;   /* White text */
-        --text-color-secondary: #ff00ff; /* Neon Pink/Magenta for highlights */
+        --primary-color: #ff0000;      /* Deep Red Neon Glow */
+        --primary-dark: #cc0000;       /* Darker Red */
+        --background-dark: #0a0a0a;    /* Near Black */
+        --surface-color: #1a1a1a;      /* Dark Gray/Black for components */
+        --text-color-light: #f0f0f0;   /* White/Light Gray */
+        --text-color-secondary: #0000cc; /* Deep Blue Accent (The Upside Down) */
         
-        --main-font: 'VT323', monospace;      /* Main text - Monospaced */
-        --header-font: 'Press Start 2P', cursive; /* Header text - Pixelated */
+        --main-font: 'VCR OSD Mono', monospace; /* Console/Screen text */
+        --header-font: 'Cinzel', serif;        /* Title Font */
     }
     
-    /* --- EMOTION SPECIFIC COLOR MAP (High Contrast Retro) --- */
-    .emotion-anger, .emotion-disgust { --emotion-color: #ff3300; } /* Neon Red */
-    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #ffff00; } /* Neon Yellow */
-    .emotion-sadness, .emotion-loneliness { --emotion-color: #00ffff; } /* Neon Cyan */
-    .emotion-fear, .emotion-surprise { --emotion-color: #ff00ff; } /* Neon Magenta */
+    /* --- EMOTION SPECIFIC COLOR MAP (Subtle Red/Blue Shift) --- */
+    .emotion-anger, .emotion-disgust { --emotion-color: #ff4444; } /* Lighter Red */
+    .emotion-joy, .emotion-happiness, .emotion-excitement { --emotion-color: #ffdd00; } /* Yellow/Gold for warmth */
+    .emotion-sadness, .emotion-loneliness { --emotion-color: #008cff; } /* Light Blue */
+    .emotion-fear, .emotion-surprise { --emotion-color: #ff00ff; } /* Magenta/Purple */
     .emotion-neutral { --emotion-color: var(--primary-color); }
     
     /* 3. OVERALL LAYOUT & BACKGROUND */
@@ -62,34 +63,53 @@ st.markdown("""
         padding: 2.5rem 4rem; 
         font-family: var(--main-font); 
         color: var(--text-color-light); 
-        /* Optional: Subtle repeating pattern for retro feel */
-        /* background-image: radial-gradient(var(--surface-color) 1px, transparent 1px);
-        background-size: 40px 40px; */
+        /* CRT/Scanline Effect overlay */
+        position: relative;
+    }
+    .main::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.1),
+            rgba(0, 0, 0, 0.5) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+        pointer-events: none;
+        z-index: 1000;
     }
     .stApp .st-emotion-cache-1pxn4ip, .stApp .st-emotion-cache-1v0pmnt {
         background-color: var(--surface-color);
-        border-radius: 0; /* Boxy aesthetic */
+        border-radius: 2px;
         padding: 20px;
         margin-bottom: 20px;
-        box-shadow: 4px 4px 0 var(--primary-dark); /* 8-bit shadow effect */
-        border: 2px solid var(--text-color-light);
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); /* Subtle red glow around elements */
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     /* 4. TITLES & TEXT EFFECTS */
     h1 {
-        color: var(--text-color-light);
+        color: var(--primary-color);
         font-family: var(--header-font);
-        font-weight: 400; /* Press Start 2P is monoweight */
+        font-weight: 900;
         text-align: center;
-        text-shadow: 
-            2px 2px 0 var(--text-color-secondary), /* Pixel shift shadow */
-            -2px -2px 0 var(--primary-color); /* Double shadow effect */
-        letter-spacing: 5px;
-        font-size: 2.5em; /* Increase size for pixel font legibility */
+        letter-spacing: 0.15em; /* Wide letter spacing */
+        font-size: 4em;
         line-height: 1.2;
+        
+        /* Stranger Things Glow Effect (Red on Black) */
+        text-shadow: 
+            0 0 10px var(--primary-color),
+            0 0 20px var(--primary-dark),
+            0 0 30px var(--primary-dark);
     }
     
-    /* --- SUBHEADER (h3) - Retro Console Prompt Style --- */
+    /* --- SUBHEADER (h3) - Screen Display Text --- */
     h3 {
         color: var(--text-color-light);
         font-family: var(--main-font); 
@@ -98,75 +118,68 @@ st.markdown("""
         border: none;
         margin-top: 2rem;
         margin-bottom: 1rem;
-        font-size: 1.6em; /* VT323 size adjustment */
-        
-        /* Simulating blinking cursor/console prompt */
-        display: inline-block;
-        animation: blink-caret .75s step-end infinite;
-        text-shadow: 0 0 5px var(--primary-color);
-    }
-    @keyframes blink-caret {
-        from, to { border-right: .15em solid var(--primary-color); }
-        50% { border-right: .15em solid transparent; }
+        font-size: 1.4em;
+        text-shadow: 0 0 5px var(--primary-color); /* Subtle screen glow */
     }
     
-    /* 5. TEXT AREA EFFECTS (Console Input) */
+    /* 5. TEXT AREA EFFECTS (Data Stream) */
     textarea {
-        border-radius: 0 !important; /* Boxy */
-        border: 4px solid var(--text-color-secondary) !important; /* Thick border */
+        border-radius: 0 !important;
+        border: 2px solid var(--text-color-secondary) !important; /* Deep Blue border */
         padding: 15px !important;
         background-color: var(--background-dark) !important;
-        color: var(--primary-color) !important; /* Green text on dark background */
-        font-size: 20px !important; 
+        color: var(--primary-color) !important; /* Red text on black */
+        font-size: 1.2rem !important; 
         font-family: var(--main-font) !important; 
-        line-height: 1.4; 
-        box-shadow: 4px 4px 0 var(--text-color-secondary); /* 8-bit shadow */
+        line-height: 1.6; 
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8), 0 0 5px var(--primary-color); /* Inner shadow for depth */
     }
     
-    /* 6. BUTTON EFFECTS (Arcade Button) */
+    /* 6. BUTTON EFFECTS (Alert/Urgent) */
     div.stButton > button:first-child {
-        background: var(--text-color-secondary); /* Neon Pink */
+        background: var(--primary-color); /* Red */
         color: var(--background-dark);
         font-family: var(--header-font);
-        font-weight: 400;
-        border-radius: 5px; /* Slightly rounded box */
+        font-weight: 600;
+        border-radius: 2px;
         padding: 0.8em 2em;
-        box-shadow: 0 5px 0 var(--primary-dark), 0 0 10px var(--text-color-secondary); 
+        box-shadow: 0 0 20px var(--primary-color); /* Intense red glow */
         text-transform: uppercase;
-        letter-spacing: 2px;
+        letter-spacing: 3px;
         border: none;
     }
     div.stButton > button:first-child:hover {
-        transform: translateY(2px); /* Simulate button press */
-        background: var(--primary-color); /* Color change on hover */
-        box-shadow: 0 3px 0 var(--primary-dark), 0 0 15px var(--primary-color); 
+        transform: scale(1.02); 
+        background: var(--primary-dark); 
+        box-shadow: 0 0 30px var(--primary-color), 0 0 5px var(--primary-color); 
     }
     
-    /* 7. CUSTOM RESULT CARDS and other elements */
+    /* 7. CUSTOM RESULT CARDS */
     .result-text {
         color: var(--text-color-light);
         font-family: var(--main-font); 
-        font-size: 1.4rem; /* Larger for VT323 */
+        font-size: 1.1rem;
         margin-bottom: 10px;
-        font-style: italic;
+        font-style: normal;
     }
     
     .result-confidence {
-        font-size: 1.2rem;
+        font-size: 1rem;
         font-weight: 400;
-        color: var(--primary-color);
+        color: var(--text-color-light);
         font-family: var(--main-font); 
+        text-shadow: 0 0 3px var(--emotion-color, var(--primary-color));
     }
     
     .result-card {
-        background-color: var(--background-dark); /* Darker background for card content */
-        border: 4px solid var(--emotion-color, var(--primary-dark)); 
-        border-left: 15px solid var(--emotion-color, var(--primary-color)); 
-        border-radius: 0; /* Boxy */
+        background-color: var(--surface-color);
+        border: 2px solid var(--emotion-color, var(--primary-dark)); 
+        border-left: 8px solid var(--emotion-color, var(--primary-color)); 
+        border-radius: 4px;
         padding: 15px 20px;
         margin-bottom: 20px;
-        box-shadow: 4px 4px 0 var(--emotion-color, var(--primary-dark)), 0 0 15px rgba(0,0,0,0.5);
-        transition: all 0.1s ease;
+        box-shadow: 0 0 8px var(--emotion-color, rgba(255, 0, 0, 0.4));
+        transition: all 0.3s ease;
     }
     
     .card-header-line {
@@ -177,32 +190,32 @@ st.markdown("""
     }
     
     .emotion-gif {
-        width: 64px; /* Slightly larger image */
-        height: 64px;
-        border-radius: 0; /* Boxy */
+        width: 50px; 
+        height: 50px;
+        border-radius: 50%;
         object-fit: cover;
-        border: 3px dashed var(--emotion-color); /* Dashed border for retro */
-        box-shadow: 0 0 15px var(--emotion-color);
+        border: 2px solid var(--emotion-color);
+        box-shadow: 0 0 10px var(--emotion-color);
     }
     
     .result-emotion {
         display: inline-block;
-        font-size: 1.6rem;
-        font-weight: 400;
-        color: var(--background-dark);
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--surface-color);
         background-color: var(--emotion-color);
         padding: 5px 12px;
-        border-radius: 0;
+        border-radius: 4px;
         text-transform: uppercase;
-        box-shadow: 2px 2px 0 var(--primary-dark);
+        box-shadow: 0 0 5px var(--emotion-color);
         font-family: var(--header-font);
     }
     
     /* 8. DIVIDER & FOOTER */
     hr {
         border: 0;
-        height: 4px;
-        background: linear-gradient(to right, rgba(0,0,0,0), var(--text-color-secondary), var(--text-color-secondary), rgba(0,0,0,0)); 
+        height: 1px;
+        background: linear-gradient(to right, rgba(255,0,0,0), var(--primary-color), var(--primary-color), rgba(255,0,0,0)); 
         margin: 3rem 0;
     }
     footer, header { visibility: hidden !important; }
@@ -211,9 +224,9 @@ st.markdown("""
     .st-emotion-detector-caption {
         text-align: center; 
         font-family: var(--main-font); 
-        color: var(--text-color-secondary); 
-        font-size: 1.2rem;
-        text-shadow: 0 0 5px var(--text-color-secondary);
+        color: var(--text-color-light); 
+        font-size: 1rem;
+        text-shadow: 0 0 5px var(--primary-color);
     }
 
     </style>
@@ -254,8 +267,8 @@ def detect_emotions(classifier, texts):
 # =================================================================
 
 # MAIN TITLE
-st.title("👾 EMOTION DETECTOR V1.98 💾")
-st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--main-font); font-size: 1.4rem;">SCANNING WORDS FOR FEELING STATES...</p>', unsafe_allow_html=True)
+st.title("S T R A N G E R   T E X T S")
+st.markdown(f'<p style="color: var(--text-color-light); text-align: center; font-family: var(--header-font); font-size: 1.5em; letter-spacing: 0.1em; text-shadow: 0 0 8px var(--primary-color);">A N A L Y S I S   O F   T H E   V O I C E</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -263,7 +276,7 @@ st.markdown("---")
 input_container = st.container()
 with input_container:
     
-    st.subheader("ENTER TEXT: >")
+    st.subheader("INPUT: TRANSMISSION RECEIVED >>")
     
     # --- TEXT AREA ---
     col1, col_input, col2 = st.columns([1, 4, 1])
@@ -284,7 +297,7 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
         
         col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
         with col_btn:
-              analyze = st.button("▶️ EXECUTE EMOTION CHECK ◀️", use_container_width=True)
+              analyze = st.button("🔴 OPEN GATE TO EMOTIONS 🔴", use_container_width=True)
 
 # Load the model silently
 classifier = initialize_classifier()
@@ -296,12 +309,12 @@ if analyze:
     if texts:
         results_container = st.container()
         with results_container:
-            st.subheader("SCAN REPORT: EMOTIONS DETECTED >")
+            st.subheader("OUTPUT: THE UPSIDE DOWN ANALYSIS >>")
             
             # Use two columns to display results cards
             cols = st.columns(2)
             
-            with st.spinner("Processing... "):
+            with st.spinner("Processing... The lights are flickering..."):
                 results = detect_emotions(classifier, texts)
                 
                 # Display results in alternating columns
@@ -339,8 +352,8 @@ if analyze:
                         """, unsafe_allow_html=True)
                 
     else:
-        st.warning("ERROR: INPUT BUFFER EMPTY. PLEASE ENTER TEXT.")
+        st.warning("SYSTEM ALERT: TEXT INPUT REQUIRED. DANGER IMMINENT.")
 
 # 3. FOOTER
 st.markdown("---")
-st.markdown('<p class="st-emotion-detector-caption">TERMINAL ACCESS BY CSE-A 1985</p>', unsafe_allow_html=True)
+st.markdown('<p class="st-emotion-detector-caption">RUN TIME 1983. ALL RIGHTS RESERVED BY HAWKINS LAB</p>', unsafe_allow_html=True)
