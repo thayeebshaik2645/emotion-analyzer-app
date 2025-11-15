@@ -27,113 +27,136 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CUSTOM CSS (Clean, Light Mode Redesign, preserving original result card structure) ---
+# --- CUSTOM CSS (Stranger Things Theme) ---
 st.markdown("""
     <style>
     /* ---------------------------------------------------- */
     /* 1. FONT IMPORTS */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Playfair+Display:wght@700&display=swap');
+    /* MonteCarlo is the closest publicly available font to the Stranger Things logo font */
+    @import url('https://fonts.googleapis.com/css2?family=MonteCarlo&family=Roboto:wght@400;700;900&display=swap');
     
-    /* 2. COLOR PALETTE DEFINITION (CLEAN / PROFESSIONAL LIGHT) */
+    /* 2. COLOR PALETTE DEFINITION (STRANGER THINGS) */
     :root {
-        --primary-color: #173f5f; /* Deep Blue Accent */
-        --primary-light: #528cbe; /* Light Blue */
-        --background-light: #f7f7f7; /* Off-White Background */
-        --surface-color: #ffffff; /* White Cards/Containers */
-        --text-color-dark: #333333; 
-        --text-color-secondary: #777777; 
+        --primary-color: #e21c22; /* Iconic Deep Red */
+        --primary-dark: #8c1014;  /* Darker Red */
+        --background-dark: #0f0f0f; /* Near-Black/Upside Down */
+        --surface-color: #1a1a1a; /* Dark Card Surface */
+        --text-color-light: #f0f0f0; 
+        --text-color-secondary: #999999; 
         
-        --main-font: 'Inter', sans-serif; 
-        --header-font: 'Playfair Display', serif; 
+        --main-font: 'Roboto', sans-serif; 
+        --title-font: 'MonteCarlo', cursive; 
+        
+        --glow-red: 0 0 5px var(--primary-color), 0 0 10px var(--primary-dark);
     }
     
-    /* --- EMOTION SPECIFIC COLOR MAP (Professional Tones) --- */
-    .emotion-anger { --emotion-color: #e63946; } /* Red */
-    .emotion-joy { --emotion-color: #2a9d8f; } /* Teal */
-    .emotion-sadness { --emotion-color: #457b9d; } /* Steel Blue */
-    .emotion-fear { --emotion-color: #ffb703; } /* Amber */
-    .emotion-neutral { --emotion-color: #adb5bd; } /* Grey */
-    .emotion-disgust { --emotion-color: #84a98c; } /* Muted Green */
-    .emotion-surprise { --emotion-color: #fca311; } /* Orange */
+    /* --- EMOTION SPECIFIC COLOR MAP (Subtle Red/Dark Tones) --- */
+    /* Emotion colors maintain their distinctiveness but are muted/darkened to fit the theme */
+    .emotion-anger { --emotion-color: #cc0000; } 
+    .emotion-joy { --emotion-color: #008000; } 
+    .emotion-sadness { --emotion-color: #0000cc; } 
+    .emotion-fear { --emotion-color: #8b008b; } 
+    .emotion-neutral { --emotion-color: #555555; }
+    .emotion-disgust { --emotion-color: #666600; } 
+    .emotion-surprise { --emotion-color: #cc6600; } 
 
     
     /* 3. OVERALL LAYOUT & BACKGROUND */
     .main {
-        background: var(--background-light);
+        background: var(--background-dark);
         padding: 3rem 4rem; 
         font-family: var(--main-font); 
-        color: var(--text-color-dark); 
+        color: var(--text-color-light); 
+        /* Subtle Upside Down texture effect */
+        background-image: radial-gradient(circle, rgba(20,20,20,0.8) 0%, rgba(15,15,15,1) 100%);
     }
     .stApp .st-emotion-cache-1pxn4ip, .stApp .st-emotion-cache-1v0pmnt {
         background-color: var(--surface-color);
-        border-radius: 10px;
+        border-radius: 5px;
         padding: 25px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow */
+        margin-bottom: 25px;
+        box-shadow: 0 0 15px rgba(226, 28, 34, 0.3); /* Red glow around containers */
+        border: 1px solid var(--primary-dark);
     }
 
     /* 4. TITLES & TEXT EFFECTS */
     h1 {
         color: var(--primary-color);
-        font-weight: 900;
-        font-family: var(--header-font);
+        font-weight: 700;
+        font-family: var(--title-font);
         text-align: center;
-        letter-spacing: 1px;
-        margin-bottom: 0.5rem;
+        font-size: 5rem; /* Larger, more dramatic title */
+        letter-spacing: 15px;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+        /* The signature red text glow effect */
+        text-shadow: 
+            0 0 7px var(--primary-color), 
+            0 0 10px var(--primary-color), 
+            0 0 20px var(--primary-dark), 
+            0 0 40px var(--primary-dark);
     }
     
     /* --- SECTION SUBHEADER (h3) --- */
     h3 {
-        color: var(--primary-color);
+        color: var(--text-color-light);
         font-family: var(--main-font); 
         font-weight: 700; 
-        border-left: 5px solid var(--primary-light);
+        border-left: 5px solid var(--primary-color);
         padding-left: 10px;
         margin-top: 2rem;
         margin-bottom: 1.5rem;
         font-size: 1.5rem;
+        letter-spacing: 1px;
+    }
+    /* Secondary text for model name */
+    p[data-testid="stMarkdownContainer"] {
+        color: var(--text-color-secondary) !important;
+        text-align: center;
+        font-family: monospace;
     }
 
     /* 5. TEXT AREA EFFECTS */
     textarea {
-        border-radius: 8px !important;
-        border: 1px solid #ccc !important;
-        background-color: #ffffff !important; 
-        color: var(--text-color-dark) !important;
+        border-radius: 5px !important;
+        border: 2px solid var(--primary-dark) !important;
+        background-color: #0d0d0d !important; /* Very dark input field */
+        color: var(--primary-color) !important;
         font-size: 16px !important; 
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); 
+        font-family: monospace !important; 
+        box-shadow: 0 0 5px rgba(226, 28, 34, 0.4); 
     }
 
     /* 6. BUTTON EFFECTS */
     div.stButton > button:first-child {
         background: var(--primary-color);
-        color: #ffffff;
-        font-weight: 700;
+        color: var(--background-dark);
+        font-weight: 900;
         font-family: var(--main-font);
-        border-radius: 8px;
-        padding: 0.6em 1.5em;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+        border-radius: 5px;
+        padding: 0.8em 2em;
+        box-shadow: 0 0 10px var(--primary-color); 
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: background-color 0.2s ease, transform 0.2s ease;
+        letter-spacing: 1px;
+        transition: all 0.2s ease;
         border: none;
     }
     div.stButton > button:first-child:hover {
-        transform: translateY(-1px); 
-        background: var(--primary-light); 
-        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); 
+        transform: scale(1.02); 
+        background: var(--primary-dark); 
+        color: var(--primary-color); 
+        box-shadow: 0 0 20px var(--primary-color); 
     }
     
-    /* 7. CUSTOM RESULT CARDS (Original Structure, New Clean Styles) */
+    /* 7. CUSTOM RESULT CARDS (Original structure, themed styling) */
     .result-card {
-        background-color: var(--surface-color);
-        /* Retaining original style: Left border for accent */
-        border: 1px solid #ddd;
-        border-left: 8px solid var(--emotion-color, var(--primary-light)); 
-        border-radius: 10px;
+        background-color: #111111; /* Darker than surface */
+        border: 1px solid var(--primary-dark);
+        border-left: 8px solid var(--emotion-color, var(--primary-color)); 
+        border-radius: 5px;
         padding: 15px 20px;
         margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 8px rgba(226, 28, 34, 0.1);
         transition: all 0.3s ease;
     }
     
@@ -150,24 +173,24 @@ st.markdown("""
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid var(--emotion-color);
-        /* Removed neon glow */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 5px var(--emotion-color);
+        filter: brightness(0.9); /* Slightly darker GIFs for theme */
     }
 
     .result-emotion {
         display: inline-block;
         font-size: 1rem;
         font-weight: 700;
-        color: #ffffff;
+        color: var(--text-color-light); /* White text on colored background */
         background-color: var(--emotion-color);
         padding: 5px 12px;
         border-radius: 4px;
         text-transform: uppercase;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
     
     .result-text {
-        color: var(--text-color-dark);
+        color: var(--text-color-light);
         font-family: var(--main-font); 
         font-size: 1rem;
         margin-bottom: 10px;
@@ -176,24 +199,26 @@ st.markdown("""
 
     .result-confidence {
         font-size: 0.9rem;
-        font-weight: 600;
+        font-weight: 400;
         color: var(--text-color-secondary);
-        font-family: var(--main-font); 
+        font-family: monospace; 
     }
 
     /* 8. DIVIDER & FOOTER */
     hr {
         border: 0;
-        height: 1px;
-        background: #e0e0e0; 
+        height: 2px;
+        background: var(--primary-color); 
         margin: 2rem 0;
+        box-shadow: var(--glow-red);
     }
     .st-emotion-detector-caption {
         text-align: center;
         color: var(--text-color-secondary);
-        font-family: var(--main-font);
+        font-family: monospace;
         font-size: 0.8rem;
         padding-top: 10px;
+        opacity: 0.7;
     }
     footer, header { visibility: hidden !important; }
 
@@ -236,19 +261,19 @@ def detect_emotions(classifier, texts):
     return results
 
 # =================================================================
-# --- APP LAYOUT (REVISED: CLEAN LIGHT MODE, Original Result UI) ---
+# --- APP LAYOUT (STRANGER THINGS THEME) ---
 # =================================================================
 
 # MAIN TITLE
-st.title("Sentiment & Emotion Analyzer 📊")
-st.markdown(f'<p style="color: var(--text-color-secondary); text-align: center; font-family: var(--main-font);">Analyzing Textual Emotion using {MODEL_NAME.split("/")[-1]}</p>', unsafe_allow_html=True)
+st.title("EMOTION DETECTOR")
+st.markdown(f'<p>ANALYSIS INTERFACE // MODEL: {MODEL_NAME.split("/")[-1]}</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
 # 1. INPUT BLOCK 
 with st.container():
     
-    st.subheader("1. Enter Text for Analysis")
+    st.subheader("1. INPUT TEXT SCRAMBLE")
     
     # --- TEXT AREA ---
     default_text = """I am so incredibly happy and proud of what we achieved today!
@@ -268,28 +293,28 @@ My heart is racing, I'm genuinely terrified of what might happen next."""
     # Center the button
     col_btn_l, col_btn, col_btn_r = st.columns([1.5, 2, 1.5])
     with col_btn:
-        analyze = st.button("Analyze Emotions", use_container_width=True)
+        analyze = st.button("RUN ANALYSIS 🔦", use_container_width=True)
 
 # Load the model silently
 classifier = initialize_classifier()
 
 st.markdown("---")
 
-# 2. RESULTS BLOCK (Restored to original alternating column display)
+# 2. RESULTS BLOCK (Original structure maintained)
 if analyze:
     if texts:
         results_container = st.container()
         with results_container:
-            st.subheader("2. Analysis Results")
+            st.subheader("2. UPSIDE DOWN FINDINGS")
             
             # Use two columns to display results cards (Original UI structure)
             cols = st.columns(2)
             
-            with st.spinner("Analyzing text..."):
+            with st.spinner("Decoding signals..."):
                 results = detect_emotions(classifier, texts)
                 
                 if not results:
-                    st.warning("No valid text lines found for analysis.")
+                    st.warning("NO DATA SIGNATURES FOUND. Please enter some text.")
                 
                 # Display results in alternating columns
                 for i, result in enumerate(results):
@@ -319,15 +344,15 @@ if analyze:
                                 <div class="result-text">"{input_text}"</div>
                                 <div style="display: flex; align-items: center; justify-content: flex-end;">
                                     <div class="result-confidence">
-                                        CONFIDENCE: {confidence}
+                                        TRUST LEVEL: {confidence}
                                     </div>
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
                         
     else:
-        st.warning("Please enter some text in the input box to start the analysis.")
+        st.warning("WARNING: Text input is empty. THE LIGHTS ARE OUT.")
 
 # 3. FOOTER
 st.markdown("---")
-st.markdown('<p class="st-emotion-detector-caption">Built by THAYEEB | Model: Hugging Face Transformers</p>', unsafe_allow_html=True)
+st.markdown('<p class="st-emotion-detector-caption">THE ANALYSIS CONTINUES... // BUILT BY THAYEEB</p>', unsafe_allow_html=True)
